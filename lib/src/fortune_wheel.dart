@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_fortune_wheel/src/arrow_view_center_right.dart';
 import 'package:flutter_fortune_wheel/src/board_view.dart';
 import 'package:flutter_fortune_wheel/src/models/fortune_item.dart';
 
@@ -8,12 +9,14 @@ class FortunerWheel extends StatefulWidget {
     Key? key,
     required this.items,
     required this.onChanged,
+    required this.onResult,
     this.durationWheel = const Duration(milliseconds: 5000),
   }) : super(key: key);
 
   final List<FortuneItem> items;
   final Duration durationWheel;
-  final Function(FortuneItem fortuneItem) onChanged;
+  final Function(FortuneItem item) onChanged;
+  final Function(FortuneItem item) onResult;
 
   @override
   _FortunerWheelState createState() => _FortunerWheelState();
@@ -25,13 +28,12 @@ class _FortunerWheelState extends State<FortunerWheel>
   double _current = 0;
   late AnimationController _wheelAnimationController;
   late Animation _wheelAnimation;
-  static const _durationWheel = Duration(milliseconds: 5000);
 
   @override
   void initState() {
     super.initState();
     _wheelAnimationController =
-        AnimationController(vsync: this, duration: _durationWheel);
+        AnimationController(vsync: this, duration: widget.durationWheel);
     _wheelAnimation = CurvedAnimation(
         parent: _wheelAnimationController,
         curve: Curves.fastLinearToSlowEaseIn);
@@ -46,31 +48,40 @@ class _FortunerWheelState extends State<FortunerWheel>
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-        animation: _wheelAnimation,
-        builder: (context, child) {
-          final _value = _wheelAnimation.value;
-          final _angle = _value * this._angle;
-          widget.onChanged.call(
-              widget.items[_getIndexWheelItem(_value * _angle + _current)]);
-          return Stack(
-            alignment: Alignment.center,
-            children: <Widget>[
-              BoardView(items: widget.items, current: _current, angle: _angle),
-              _buildCenterOfWheel(),
-              _buildGo(),
-              // SizedBox(
-              //   height: MediaQuery.of(context).size.shortestSide * 0.8,
-              //   width: MediaQuery.of(context).size.shortestSide * 0.8,
-              //   child: const Align(
-              //     alignment: Alignment(1.1, 0),
-              //     child: Icon(
-              //       Icons.arrow_back_ios_outlined,
-              //     ),
-              //   ),
-              // ),
-            ],
-          );
-        });
+      animation: _wheelAnimation,
+      builder: (context, child) {
+        // print('value = ${_wheelAnimation.value}');
+        // print('this._angle = ${this._angle}');
+        final animationValue = _wheelAnimation.value;
+        final angle = animationValue * _angle;
+        // print('_angle = ${_wheelAnimation.value}');
+        final index = _getIndexFortuneItem(animationValue * angle + _current);
+        widget.onChanged.call(widget.items[index]);
+        return Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            Transform.rotate(
+              angle: pi / 2,
+              child: BoardView(
+                items: widget.items,
+                current: _current,
+                angle: angle,
+              ),
+            ),
+            _buildCenterOfWheel(),
+            _buildGo(),
+            SizedBox(
+              height: MediaQuery.of(context).size.shortestSide * 0.8,
+              width: MediaQuery.of(context).size.shortestSide * 0.8,
+              child: const Align(
+                alignment: Alignment(1.07, 0),
+                child: ArrowViewCenterRight(),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildCenterOfWheel() {
@@ -81,38 +92,19 @@ class _FortunerWheelState extends State<FortunerWheel>
   }
 
   Widget _buildGo() {
-    return Container(
-      padding: EdgeInsets.zero,
-      decoration: BoxDecoration(
-        border: Border.all(width: 6, color: Colors.red),
-        shape: BoxShape.circle,
-      ),
+    return Visibility(
+      visible: !_wheelAnimationController.isAnimating,
       child: TextButton(
         onPressed: _handleButtonGoPressed,
         style: TextButton.styleFrom(
-          backgroundColor: Colors.amber,
-          shape: const CircleBorder(),
-          padding: const EdgeInsets.all(20),
-          shadowColor: Colors.black.withOpacity(0.07),
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          visualDensity: const VisualDensity(vertical: 0, horizontal: 0),
+          backgroundColor: Colors.black.withOpacity(0.4),
         ),
         child: const Text(
-          'QUAY',
-          style: TextStyle(fontSize: 18, color: Colors.red),
+          'Bấm vào đây để quay',
+          style: TextStyle(fontSize: 16, color: Colors.white),
         ),
       ),
     );
-    // return TextButton(
-    //   onPressed: _handleButtonGoPressed,
-    //   style: TextButton.styleFrom(
-    //     backgroundColor: Colors.black.withOpacity(0.4),
-    //   ),
-    //   child: const Text(
-    //     'Bấm vào đây để quay',
-    //     style: TextStyle(fontSize: 16, color: Colors.white),
-    //   ),
-    // );
   }
 
   void _handleButtonGoPressed() {
@@ -121,13 +113,19 @@ class _FortunerWheelState extends State<FortunerWheel>
       _angle = 20 + Random().nextInt(5) + _random;
       _wheelAnimationController.forward(from: 0.0).then((_) {
         _current = (_current + _random);
-        _current = _current - _current ~/ 1;
+        _current = _current - _current.floor();
         _wheelAnimationController.reset();
+
+        ///Lấy kết quả vòng quay
+        final animationValue = _wheelAnimation.value;
+        final angle = _wheelAnimation.value * _angle;
+        final index = _getIndexFortuneItem(animationValue * angle + _current);
+        widget.onResult.call(widget.items[index]);
       });
     }
   }
 
-  int _getIndexWheelItem(value) {
+  int _getIndexFortuneItem(value) {
     double _base = (2 * pi / widget.items.length / 2) / (2 * pi);
     return (((_base + value) % 1) * widget.items.length).floor();
   }

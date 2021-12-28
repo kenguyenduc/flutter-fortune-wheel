@@ -28,42 +28,45 @@ class _BoardViewState extends State<BoardView> {
   Size get size => Size(MediaQuery.of(context).size.shortestSide * 0.8,
       MediaQuery.of(context).size.shortestSide * 0.8);
 
-  double _rotote(int index) => (index / widget.items.length) * 2 * pi;
+  ///Xử lý tính độ xoay của giá trị may mắn
+  double _getRotateOfItem(int index) => (index / widget.items.length) * 2 * pi;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        //shadow
-        Container(
-          height: size.height,
-          width: size.width,
-          decoration: const BoxDecoration(shape: BoxShape.circle, boxShadow: [
-            BoxShadow(blurRadius: 20, color: Colors.black38),
-          ]),
-        ),
-        Transform.rotate(
-          angle: -(widget.current + widget.angle) * 2 * pi,
-          child: Stack(
-            alignment: Alignment.center,
-            children: <Widget>[
-              for (FortuneItem item in widget.items) ...[_buildCard(item)],
-              for (FortuneItem item in widget.items) ...[_buildValue(item)],
-            ],
+    return Container(
+      height: size.height,
+      width: size.width,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(blurRadius: 20, color: Colors.black38),
+        ],
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          Transform.rotate(
+            angle: -(widget.current + widget.angle) * 2 * pi,
+            child: Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                for (FortuneItem item in widget.items) ...[_buildCard(item)],
+                for (FortuneItem item in widget.items) ...[_buildValue(item)],
+              ],
+            ),
           ),
-        ),
-        SizedBox(
-          height: size.height,
-          width: size.width,
-          child: const ArrowView(),
-        ),
-      ],
+          // SizedBox(
+          //   height: size.height,
+          //   width: size.width,
+          //   child: const ArrowView(),
+          // ),
+        ],
+      ),
     );
   }
 
   Widget _buildCard(FortuneItem fortuneItem) {
-    double _rotate = _rotote(widget.items.indexOf(fortuneItem));
+    double _rotate = _getRotateOfItem(widget.items.indexOf(fortuneItem));
     double _angle = 2 * pi / widget.items.length;
     return Transform.rotate(
       angle: _rotate,
@@ -85,7 +88,7 @@ class _BoardViewState extends State<BoardView> {
   }
 
   Widget _buildValue(FortuneItem fortuneItem) {
-    double _rotate = _rotote(widget.items.indexOf(fortuneItem));
+    double _rotate = _getRotateOfItem(widget.items.indexOf(fortuneItem));
     return Transform.rotate(
       angle: _rotate,
       child: Container(
@@ -96,12 +99,24 @@ class _BoardViewState extends State<BoardView> {
         child: ConstrainedBox(
           constraints:
               BoxConstraints.expand(height: size.height / 3, width: 44),
-          child: AutoSizeText(
-            fortuneItem.value,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            minFontSize: 12,
-            maxFontSize: 18,
-            overflow: TextOverflow.clip,
+          child: Column(
+            children: [
+              Expanded(
+                child: AutoSizeText(
+                  fortuneItem.value,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                  minFontSize: 12,
+                  maxFontSize: 18,
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+              if (fortuneItem.icon != null)
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: fortuneItem.icon!,
+                ),
+            ],
           ),
         ),
       ),
