@@ -1,8 +1,7 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/src/board_view.dart';
-import 'package:flutter_fortune_wheel/src/models/luck.dart';
+import 'package:flutter_fortune_wheel/src/models/fortune_item.dart';
 
 class FortunerWheel extends StatefulWidget {
   const FortunerWheel({
@@ -12,9 +11,9 @@ class FortunerWheel extends StatefulWidget {
     this.durationWheel = const Duration(milliseconds: 5000),
   }) : super(key: key);
 
-  final List<Luck> items;
+  final List<FortuneItem> items;
   final Duration durationWheel;
-  final Function(Luck luck) onChanged;
+  final Function(FortuneItem fortuneItem) onChanged;
 
   @override
   _FortunerWheelState createState() => _FortunerWheelState();
@@ -27,20 +26,6 @@ class _FortunerWheelState extends State<FortunerWheel>
   late AnimationController _wheelAnimationController;
   late Animation _wheelAnimation;
   static const _durationWheel = Duration(milliseconds: 5000);
-  final List<Luck> _itemsWheel = [
-    Luck(1, Colors.accents[0]),
-    Luck(2, Colors.accents[2]),
-    Luck(3, Colors.accents[4]),
-    Luck(4, Colors.accents[6]),
-    Luck(5, Colors.accents[8]),
-    Luck(6, Colors.accents[10]),
-    Luck(7, Colors.accents[12]),
-    Luck(8, Colors.accents[14]),
-    Luck(9, Colors.accents[15]),
-    Luck(10, Colors.accents[3]),
-    Luck(11, Colors.accents[5]),
-    Luck(12, Colors.accents[7]),
-  ];
 
   @override
   void initState() {
@@ -65,14 +50,13 @@ class _FortunerWheelState extends State<FortunerWheel>
         builder: (context, child) {
           final _value = _wheelAnimation.value;
           final _angle = _value * this._angle;
-          final _index = _getIndexWheelItem(_value * _angle + _current);
-          print(_itemsWheel[_index].value);
+          widget.onChanged.call(
+              widget.items[_getIndexWheelItem(_value * _angle + _current)]);
           return Stack(
             alignment: Alignment.center,
             children: <Widget>[
-              BoardView(items: _itemsWheel, current: _current, angle: _angle),
+              BoardView(items: widget.items, current: _current, angle: _angle),
               _buildCenterOfWheel(),
-              // if (!_wheelAnimationController.isAnimating)
               _buildGo(),
               // SizedBox(
               //   height: MediaQuery.of(context).size.shortestSide * 0.8,
@@ -84,7 +68,6 @@ class _FortunerWheelState extends State<FortunerWheel>
               //     ),
               //   ),
               // ),
-              _buildResult(_value),
             ],
           );
         });
@@ -120,16 +103,16 @@ class _FortunerWheelState extends State<FortunerWheel>
         ),
       ),
     );
-    return TextButton(
-      onPressed: _handleButtonGoPressed,
-      style: TextButton.styleFrom(
-        backgroundColor: Colors.black.withOpacity(0.4),
-      ),
-      child: const Text(
-        'Bấm vào đây để quay nó',
-        style: TextStyle(fontSize: 16, color: Colors.white),
-      ),
-    );
+    // return TextButton(
+    //   onPressed: _handleButtonGoPressed,
+    //   style: TextButton.styleFrom(
+    //     backgroundColor: Colors.black.withOpacity(0.4),
+    //   ),
+    //   child: const Text(
+    //     'Bấm vào đây để quay',
+    //     style: TextStyle(fontSize: 16, color: Colors.white),
+    //   ),
+    // );
   }
 
   void _handleButtonGoPressed() {
@@ -144,28 +127,8 @@ class _FortunerWheelState extends State<FortunerWheel>
     }
   }
 
-  ///Xử lý lấy index kết quả vòng quay
   int _getIndexWheelItem(value) {
-    double _base = (2 * pi / _itemsWheel.length / 2) / (2 * pi);
-    return (((_base + value) % 1) * _itemsWheel.length).floor();
-  }
-
-  ///Ui kết quả vòng quay
-  Widget _buildResult(_value) {
-    int _index = _getIndexWheelItem(_value * _angle + _current);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Text(
-          _itemsWheel[_index].value.toString(),
-          style: const TextStyle(
-            fontSize: 20,
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
+    double _base = (2 * pi / widget.items.length / 2) / (2 * pi);
+    return (((_base + value) % 1) * widget.items.length).floor();
   }
 }

@@ -7,35 +7,6 @@ class ArrowView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return Align(
-    //   // alignment: const Alignment(1.1, 0),
-    //   alignment: Alignment.center,
-    //   child: Padding(
-    //     padding: const EdgeInsets.only(top: 80),
-    //     child: ClipPath(
-    //       clipper: _ArrowClipper(),
-    //       child: Container(
-    //         decoration: BoxDecoration(
-    //           gradient: const LinearGradient(
-    //             begin: Alignment.topCenter,
-    //             end: Alignment.bottomCenter,
-    //             // colors: [Colors.redAccent, Colors.red],
-    //             colors: [Colors.black12, Colors.black],
-    //           ),
-    //           boxShadow: [
-    //             BoxShadow(
-    //               color: Colors.black.withOpacity(0.07),
-    //               blurRadius: 15,
-    //             ),
-    //           ],
-    //         ),
-    //         height: 40,
-    //         width: 40,
-    //       ),
-    //     ),
-    //   ),
-    // );
-
     return Align(
       alignment: Alignment.center,
       child: Transform.rotate(
@@ -49,7 +20,6 @@ class ArrowView extends StatelessWidget {
                 gradient: const LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  // colors: [Colors.redAccent, Colors.red],
                   colors: [Colors.black12, Colors.black],
                 ),
                 boxShadow: [

@@ -1,15 +1,15 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/src/arrow_view.dart';
-import 'package:flutter_fortune_wheel/src/gradient_border_container.dart';
-import 'package:flutter_fortune_wheel/src/models/luck.dart';
+import 'package:flutter_fortune_wheel/src/models/fortune_item.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class BoardView extends StatefulWidget {
   final double angle;
   final double current;
 
   ///List value of wheel
-  final List<Luck> items;
+  final List<FortuneItem> items;
 
   const BoardView({
     Key? key,
@@ -48,8 +48,8 @@ class _BoardViewState extends State<BoardView> {
           child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
-              for (Luck luck in widget.items) ...[_buildCard(luck)],
-              for (Luck luck in widget.items) ...[_buildValue(luck)],
+              for (FortuneItem item in widget.items) ...[_buildCard(item)],
+              for (FortuneItem item in widget.items) ...[_buildValue(item)],
             ],
           ),
         ),
@@ -62,8 +62,8 @@ class _BoardViewState extends State<BoardView> {
     );
   }
 
-  Widget _buildCard(Luck luck) {
-    double _rotate = _rotote(widget.items.indexOf(luck));
+  Widget _buildCard(FortuneItem fortuneItem) {
+    double _rotate = _rotote(widget.items.indexOf(fortuneItem));
     double _angle = 2 * pi / widget.items.length;
     return Transform.rotate(
       angle: _rotate,
@@ -76,7 +76,7 @@ class _BoardViewState extends State<BoardView> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [luck.color, luck.color.withOpacity(0)],
+              colors: [fortuneItem.color, fortuneItem.color.withOpacity(0)],
             ),
           ),
         ),
@@ -84,8 +84,8 @@ class _BoardViewState extends State<BoardView> {
     );
   }
 
-  Widget _buildValue(Luck luck) {
-    double _rotate = _rotote(widget.items.indexOf(luck));
+  Widget _buildValue(FortuneItem fortuneItem) {
+    double _rotate = _rotote(widget.items.indexOf(fortuneItem));
     return Transform.rotate(
       angle: _rotate,
       child: Container(
@@ -96,9 +96,12 @@ class _BoardViewState extends State<BoardView> {
         child: ConstrainedBox(
           constraints:
               BoxConstraints.expand(height: size.height / 3, width: 44),
-          child: Text(
-            luck.value.toString(),
+          child: AutoSizeText(
+            fortuneItem.value,
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            minFontSize: 12,
+            maxFontSize: 18,
+            overflow: TextOverflow.clip,
           ),
         ),
       ),

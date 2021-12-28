@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 
 ///Giá tri may mắn phần tử vòng quay
-class Luck {
-  Luck(
-    this.value,
-    this.color, {
-    this.icon,
-  });
+class FortuneItem {
+  FortuneItem(this.value, this.color, [this.icon]);
 
-  final int value;
+  final String value;
   final Color color;
   final Widget? icon;
 }
