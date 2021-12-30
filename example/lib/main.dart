@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
@@ -34,6 +35,13 @@ class _MyAppState extends State<MyApp> {
     FortuneItem('10', Colors.accents[3]),
     FortuneItem('11', Colors.accents[5]),
     FortuneItem('12', Colors.accents[7]),
+  ];
+  final List<FortuneItem> _listPrioty = <FortuneItem>[
+    FortuneItem('1', Colors.accents[0], priority: 1),
+    FortuneItem('2', Colors.accents[2], priority: 5),
+    FortuneItem('3', Colors.accents[4], priority: 2),
+    FortuneItem('4', Colors.accents[6], priority: 2),
+    FortuneItem('5', Colors.accents[8], priority: 1),
   ];
 
   final List<FortuneItem> _anNhau = <FortuneItem>[
@@ -79,7 +87,7 @@ class _MyAppState extends State<MyApp> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 FortunerWheel(
-                  items: _anNhau,
+                  items: _listPrioty,
                   onChanged: (FortuneItem item) {
                     _resultWheelController.add(item);
                   },
@@ -100,6 +108,7 @@ class _MyAppState extends State<MyApp> {
                 ),
                 _buildResult(),
                 _buildResultsHistory(),
+                const RoulettePageWidget(),
               ],
             ),
           ),
@@ -134,23 +143,106 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget _buildResultsHistory() {
-    return Container(
-      height: 200,
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-      child: StreamBuilder<List<FortuneItem>>(
-        stream: _resultsHistoryController.stream,
-        builder: (context, snapshot) {
-          if (snapshot.data != null) {
-            return ListView.builder(
-              itemCount: _resultsHistory.length,
-              itemBuilder: (context, index) {
-                return Text('${index + 1}: ${_resultsHistory[index].value}');
-              },
-            );
-          }
-          return const SizedBox();
-        },
-      ),
+    return StreamBuilder<List<FortuneItem>>(
+      stream: _resultsHistoryController.stream,
+      builder: (context, snapshot) {
+        if (snapshot.data != null) {
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _resultsHistory.length,
+            itemBuilder: (context, index) {
+              return Text('${index + 1}: ${_resultsHistory[index].value}');
+            },
+          );
+        }
+        return const SizedBox();
+      },
+    );
+  }
+}
+
+class RoulettePageWidget extends StatefulWidget {
+  const RoulettePageWidget({Key? key}) : super(key: key);
+
+  @override
+  _RoulettePageWidgetState createState() => _RoulettePageWidgetState();
+}
+
+class _RoulettePageWidgetState extends State<RoulettePageWidget>
+    with SingleTickerProviderStateMixin {
+  late Animation<double> _animation;
+  late Tween<double> _tween;
+  late AnimationController _animationController;
+  final Random _random = Random();
+
+  int position = 0;
+
+  double getRandomAngle() {
+    return pi * 2 / 25 * _random.nextInt(25);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
+    _tween = Tween(begin: 0.0, end: getRandomAngle());
+    _animation = _tween.animate(_animationController)
+      ..addListener(() {
+        setState(() {});
+      });
+  }
+
+  void setNewPosition() {
+    _tween.begin = _tween.end;
+    _animationController.reset();
+    _tween.end = getRandomAngle();
+    _animationController.forward();
+  }
+
+  Future<void> _gameLoop() async {
+    _animationController.forward();
+    _tween.begin = _tween.end;
+    _animationController.reset();
+    _tween.end = _tween.end??0 + pi * 2 + 100;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Center(
+            child: Transform.rotate(
+          angle: _animation.value,
+          child: const Icon(
+            Icons.arrow_upward,
+            size: 100.0,
+          ),
+        )),
+        TextButton(
+          child: const Text('SPIN'),
+          onPressed: setNewPosition,
+        ),
+        ElevatedButton(
+          child: const Text('SPIN180'),
+          onPressed: () {
+            // _tween.begin = _tween.end;
+            // _animationController.reset();
+            // _tween.end = pi/2;
+            _animationController.forward(from: 0.0).then((value) {
+              _tween.begin = _tween.end;
+              _animationController.reset();
+            });
+          },
+        ),
+        ElevatedButton(
+          child: Text('SPIN360'),
+          onPressed: () {
+            _gameLoop();
+          },
+        )
+      ],
     );
   }
 }

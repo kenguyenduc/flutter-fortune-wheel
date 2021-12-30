@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/src/arrow_view_center_right.dart';
 import 'package:flutter_fortune_wheel/src/board_view.dart';
+import 'package:flutter_fortune_wheel/src/helpers/fortune_item_helper.dart';
 import 'package:flutter_fortune_wheel/src/models/fortune_item.dart';
 
 class FortunerWheel extends StatefulWidget {
@@ -28,6 +29,7 @@ class _FortunerWheelState extends State<FortunerWheel>
   double _current = 0;
   late AnimationController _wheelAnimationController;
   late Animation _wheelAnimation;
+  late List<FortuneItem> _fortuneValuesByPriority;
 
   @override
   void initState() {
@@ -37,6 +39,7 @@ class _FortunerWheelState extends State<FortunerWheel>
     _wheelAnimation = CurvedAnimation(
         parent: _wheelAnimationController,
         curve: Curves.fastLinearToSlowEaseIn);
+    _fortuneValuesByPriority = getFortuneValuesByPriority(widget.items);
   }
 
   @override
@@ -50,11 +53,8 @@ class _FortunerWheelState extends State<FortunerWheel>
     return AnimatedBuilder(
       animation: _wheelAnimation,
       builder: (context, child) {
-        // print('value = ${_wheelAnimation.value}');
-        // print('this._angle = ${this._angle}');
         final animationValue = _wheelAnimation.value;
         final angle = animationValue * _angle;
-        // print('_angle = ${_wheelAnimation.value}');
         final index = _getIndexFortuneItem(animationValue * angle + _current);
         widget.onChanged.call(widget.items[index]);
         return Stack(
@@ -108,6 +108,10 @@ class _FortunerWheelState extends State<FortunerWheel>
   }
 
   void _handleButtonGoPressed() {
+    ///random index trong danh sách được tạo theo ưu tiên quay trúng
+    final int randomIndex = Random().nextInt(_fortuneValuesByPriority.length);
+    FortuneItem luckResult = _fortuneValuesByPriority[randomIndex];
+
     if (!_wheelAnimationController.isAnimating) {
       double _random = Random().nextDouble();
       _angle = 20 + Random().nextInt(5) + _random;
@@ -128,5 +132,9 @@ class _FortunerWheelState extends State<FortunerWheel>
   int _getIndexFortuneItem(value) {
     double _base = (2 * pi / widget.items.length / 2) / (2 * pi);
     return (((_base + value) % 1) * widget.items.length).floor();
+    /*
+    *
+    *
+    * */
   }
 }

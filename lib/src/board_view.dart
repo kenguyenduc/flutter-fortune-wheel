@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_fortune_wheel/src/arrow_view.dart';
 import 'package:flutter_fortune_wheel/src/models/fortune_item.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
@@ -108,7 +107,7 @@ class _BoardViewState extends State<BoardView> {
                       fontSize: 20, fontWeight: FontWeight.bold),
                   minFontSize: 12,
                   maxFontSize: 18,
-                  overflow: TextOverflow.visible,
+                  overflow: TextOverflow.clip,
                 ),
               ),
               if (fortuneItem.icon != null)
