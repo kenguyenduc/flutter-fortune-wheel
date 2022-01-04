@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:flutter_fortune_wheel_example/fortune_wheel_page.dart';
 
 void main() {
   runApp(const MaterialApp(
-    home: MyApp(),
+    home: FortuneWheelPage(),
     title: 'Example',
   ));
 }
@@ -57,17 +56,16 @@ class _MyAppState extends State<MyApp> {
         icon: const Icon(Icons.phone_android_outlined)),
     FortuneItem('Uống 2 ly', Colors.accents[12],
         icon: const Icon(Icons.extension)),
-    FortuneItem(
-        'Uống 2 ly test chuỗi dài dài dài dài dài dài dài', Colors.green,
-        icon: const Icon(Icons.message)),
+    const FortuneItem('Bên phải uống 1 ly', Colors.green,
+        icon: Icon(Icons.message)),
   ];
 
   final StreamController<FortuneItem> _resultWheelController =
-  StreamController<FortuneItem>.broadcast();
+      StreamController<FortuneItem>.broadcast();
 
   final List<FortuneItem> _resultsHistory = <FortuneItem>[];
   final StreamController<List<FortuneItem>> _resultsHistoryController =
-  StreamController<List<FortuneItem>>.broadcast();
+      StreamController<List<FortuneItem>>.broadcast();
 
   @override
   void initState() {
@@ -79,15 +77,17 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Vòng quay may mắn'),
+          title: const Text('Example 1'),
         ),
-        body: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FortunerWheel(
-                  items: _listPrioty,
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 32),
+              Center(
+                child: FortunerWheel(
+                  items: _anNhau,
                   onChanged: (FortuneItem item) {
                     _resultWheelController.add(item);
                   },
@@ -97,8 +97,30 @@ class _MyAppState extends State<MyApp> {
                       builder: (context) {
                         return AlertDialog(
                           backgroundColor: Colors.white,
-                          title: const Text('Test'),
-                          content: Text('Result: ${item.value}'),
+                          contentPadding: const EdgeInsets.all(8),
+                          title: const Text(
+                            'Xin chúc mừng!',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 20,
+                            ),
+                          ),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                item.value.toString(),
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Đóng'),
+                                ),
+                              ),
+                            ],
+                          ),
                         );
                       },
                     );
@@ -106,28 +128,21 @@ class _MyAppState extends State<MyApp> {
                     _resultsHistoryController.add(_resultsHistory);
                   },
                 ),
-                _buildResult(),
-                _buildResultsHistory(),
-                const RoulettePageWidget(),
-                SizedBox(
-                  height: 200,
-                  child: ListWheelScrollView.useDelegate(
-                    itemExtent: 75,
-                    childDelegate: ListWheelChildBuilderDelegate(
-                        builder: (BuildContext context, int index) {
-                          if (index < 0 || index > 10) {
-                            return null;
-                          }
-                          return ListTile(
-                            leading: Icon(Icons.favorite, size: 50),
-                            title: Text('${index}'),
-                            subtitle: Text('Description here'),
-                          );
-                        }),
+              ),
+              _buildResult(),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Danh sách kết quả vòng quay:',
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                )
-              ],
-            ),
+                ),
+              ),
+              _buildResultsHistory(),
+            ],
           ),
         ),
       ),
@@ -168,102 +183,17 @@ class _MyAppState extends State<MyApp> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _resultsHistory.length,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             itemBuilder: (context, index) {
-              return Text('${index + 1}: ${_resultsHistory[index].value}');
+              return Text(
+                '${index + 1}: ${_resultsHistory[index].value}',
+                style: const TextStyle(fontSize: 16),
+              );
             },
           );
         }
         return const SizedBox();
       },
-    );
-  }
-}
-
-class RoulettePageWidget extends StatefulWidget {
-  const RoulettePageWidget({Key? key}) : super(key: key);
-
-  @override
-  _RoulettePageWidgetState createState() => _RoulettePageWidgetState();
-}
-
-class _RoulettePageWidgetState extends State<RoulettePageWidget>
-    with SingleTickerProviderStateMixin {
-  late Animation<double> _animation;
-  late Tween<double> _tween;
-  late AnimationController _animationController;
-  late final Animation _rotateAnim;
-  final Random _random = Random();
-
-  int position = 0;
-
-  double getRandomAngle() {
-    return pi * 2 / 25 * _random.nextInt(25);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController =
-        AnimationController(duration: const Duration(seconds: 2), vsync: this);
-    _rotateAnim = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.fastLinearToSlowEaseIn,
-    );
-  }
-
-  void setNewPosition() {
-    _tween.begin = _tween.end;
-    _animationController.reset();
-    _tween.end = getRandomAngle();
-    _animationController.forward();
-  }
-
-  Future<void> _gameLoop() async {
-    _animationController.forward();
-    _tween.begin = _tween.end;
-    _animationController.reset();
-    _tween.end = _tween.end ?? 0 + pi * 2 + 100;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Center(
-            child: AnimatedBuilder(
-              animation:_rotateAnim,
-              builder: (context, child) =>
-                  Transform.rotate(
-                    angle: _animation.value,
-                    child: const Icon(
-                      Icons.arrow_upward,
-                      size: 100.0,
-                    ),
-                  ),
-            )),
-        TextButton(
-          child: const Text('SPIN'),
-          onPressed: setNewPosition,
-        ),
-        ElevatedButton(
-          child: const Text('SPIN180'),
-          onPressed: () {
-            // _tween.begin = _tween.end;
-            // _animationController.reset();
-            // _tween.end = pi/2;
-            _animationController.forward(from: 0.0).then((value) {
-              _tween.begin = _tween.end;
-              _animationController.reset();
-            });
-          },
-        ),
-        ElevatedButton(
-          child: Text('SPIN360'),
-          onPressed: () {
-            // _gameLoop();
-          },
-        )
-      ],
     );
   }
 }

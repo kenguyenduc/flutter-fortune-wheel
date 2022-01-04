@@ -48,26 +48,10 @@ class _ArrowClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path _path = Path();
-
     Offset _center = size.center(Offset.zero);
     _path.lineTo(_center.dx, size.height);
     _path.lineTo(size.width, 0);
     _path.lineTo(_center.dx, _center.dy);
-
-    ///size 40, 40
-    ///Offset(20.0, 20.0)
-    ///
-    // _path.moveTo(size.width, 0);
-    // _path.lineTo(0, _center.dy);
-    // _path.lineTo(size.width, size.height);
-    // _path.lineTo(_center.dx, _center.dy);
-
-    // Offset _centerRight = size.centerRight(Offset.zero);
-    // _path.moveTo(_centerRight.dx, size.height / 2);
-    // _path.lineTo(_centerRight.dx, size.height * 1.5);
-    // _path.lineTo(0, _centerRight.dy);
-    // _path.lineTo(0, size.height / 2);
-
     _path.close();
     return _path;
   }
