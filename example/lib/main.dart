@@ -5,7 +5,7 @@ import 'package:flutter_fortune_wheel_example/fortune_wheel_page.dart';
 
 void main() {
   runApp(const MaterialApp(
-    home: FortuneWheelPage(),
+    home: MyApp(),
     title: 'Example',
   ));
 }

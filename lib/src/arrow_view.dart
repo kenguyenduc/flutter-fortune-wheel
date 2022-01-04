@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_fortune_wheel/src/arrow_view_center_right.dart';
 
 ///Ui Mũi tên chọn giá trị vòng quay
 class ArrowView extends StatelessWidget {
@@ -8,10 +7,6 @@ class ArrowView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return Align(
-    //   alignment: Alignment(1.08, 0),
-    //   child: ArrowViewCenterRight(),
-    // );
     return Align(
       alignment: Alignment.center,
       child: Transform.rotate(

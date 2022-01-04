@@ -109,12 +109,12 @@ class _FortunerWheelState extends State<FortunerWheel>
 
   void _handleButtonGoPressed() {
     ///random index trong danh sách được tạo theo ưu tiên quay trúng
-    final int randomIndex = Random().nextInt(_fortuneValuesByPriority.length);
-    FortuneItem luckResult = _fortuneValuesByPriority[randomIndex];
-
-    int index = widget.items.indexWhere((element) => element == luckResult);
-
-    final selectedAngle = -2 * pi * (index / widget.items.length);
+    // final int randomIndex = Random().nextInt(_fortuneValuesByPriority.length);
+    // FortuneItem luckResult = _fortuneValuesByPriority[randomIndex];
+    //
+    // int index = widget.items.indexWhere((element) => element == luckResult);
+    //
+    // final selectedAngle = -2 * pi * (index / widget.items.length);
 
     if (!_wheelAnimationController.isAnimating) {
       double _random = Random().nextDouble();
