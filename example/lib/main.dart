@@ -63,11 +63,11 @@ class _MyAppState extends State<MyApp> {
   ];
 
   final StreamController<FortuneItem> _resultWheelController =
-      StreamController<FortuneItem>.broadcast();
+  StreamController<FortuneItem>.broadcast();
 
   final List<FortuneItem> _resultsHistory = <FortuneItem>[];
   final StreamController<List<FortuneItem>> _resultsHistoryController =
-      StreamController<List<FortuneItem>>.broadcast();
+  StreamController<List<FortuneItem>>.broadcast();
 
   @override
   void initState() {
@@ -109,6 +109,23 @@ class _MyAppState extends State<MyApp> {
                 _buildResult(),
                 _buildResultsHistory(),
                 const RoulettePageWidget(),
+                SizedBox(
+                  height: 200,
+                  child: ListWheelScrollView.useDelegate(
+                    itemExtent: 75,
+                    childDelegate: ListWheelChildBuilderDelegate(
+                        builder: (BuildContext context, int index) {
+                          if (index < 0 || index > 10) {
+                            return null;
+                          }
+                          return ListTile(
+                            leading: Icon(Icons.favorite, size: 50),
+                            title: Text('${index}'),
+                            subtitle: Text('Description here'),
+                          );
+                        }),
+                  ),
+                )
               ],
             ),
           ),
@@ -174,6 +191,7 @@ class _RoulettePageWidgetState extends State<RoulettePageWidget>
   late Animation<double> _animation;
   late Tween<double> _tween;
   late AnimationController _animationController;
+  late final Animation _rotateAnim;
   final Random _random = Random();
 
   int position = 0;
@@ -187,11 +205,10 @@ class _RoulettePageWidgetState extends State<RoulettePageWidget>
     super.initState();
     _animationController =
         AnimationController(duration: const Duration(seconds: 2), vsync: this);
-    _tween = Tween(begin: 0.0, end: getRandomAngle());
-    _animation = _tween.animate(_animationController)
-      ..addListener(() {
-        setState(() {});
-      });
+    _rotateAnim = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.fastLinearToSlowEaseIn,
+    );
   }
 
   void setNewPosition() {
@@ -205,7 +222,7 @@ class _RoulettePageWidgetState extends State<RoulettePageWidget>
     _animationController.forward();
     _tween.begin = _tween.end;
     _animationController.reset();
-    _tween.end = _tween.end??0 + pi * 2 + 100;
+    _tween.end = _tween.end ?? 0 + pi * 2 + 100;
   }
 
   @override
@@ -213,13 +230,17 @@ class _RoulettePageWidgetState extends State<RoulettePageWidget>
     return Column(
       children: <Widget>[
         Center(
-            child: Transform.rotate(
-          angle: _animation.value,
-          child: const Icon(
-            Icons.arrow_upward,
-            size: 100.0,
-          ),
-        )),
+            child: AnimatedBuilder(
+              animation:_rotateAnim,
+              builder: (context, child) =>
+                  Transform.rotate(
+                    angle: _animation.value,
+                    child: const Icon(
+                      Icons.arrow_upward,
+                      size: 100.0,
+                    ),
+                  ),
+            )),
         TextButton(
           child: const Text('SPIN'),
           onPressed: setNewPosition,
@@ -239,7 +260,7 @@ class _RoulettePageWidgetState extends State<RoulettePageWidget>
         ElevatedButton(
           child: Text('SPIN360'),
           onPressed: () {
-            _gameLoop();
+            // _gameLoop();
           },
         )
       ],

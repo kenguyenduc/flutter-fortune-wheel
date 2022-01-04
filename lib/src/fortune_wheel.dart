@@ -112,6 +112,10 @@ class _FortunerWheelState extends State<FortunerWheel>
     final int randomIndex = Random().nextInt(_fortuneValuesByPriority.length);
     FortuneItem luckResult = _fortuneValuesByPriority[randomIndex];
 
+    int index = widget.items.indexWhere((element) => element == luckResult);
+
+    final selectedAngle = -2 * pi * (index / widget.items.length);
+
     if (!_wheelAnimationController.isAnimating) {
       double _random = Random().nextDouble();
       _angle = 20 + Random().nextInt(5) + _random;
@@ -132,9 +136,5 @@ class _FortunerWheelState extends State<FortunerWheel>
   int _getIndexFortuneItem(value) {
     double _base = (2 * pi / widget.items.length / 2) / (2 * pi);
     return (((_base + value) % 1) * widget.items.length).floor();
-    /*
-    *
-    *
-    * */
   }
 }
