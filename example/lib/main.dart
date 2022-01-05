@@ -18,9 +18,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  ///Hệ số ưu tiên
-  int numberBonusPriority = 1;
-
   final List<FortuneItem> _fortuneValues = <FortuneItem>[
     FortuneItem('1', Colors.accents[0], icon: const Icon(Icons.person_sharp)),
     FortuneItem('2', Colors.accents[2], icon: const Icon(Icons.favorite)),
@@ -37,10 +34,13 @@ class _MyAppState extends State<MyApp> {
   ];
   final List<FortuneItem> _listPrioty = <FortuneItem>[
     FortuneItem('1', Colors.accents[0], priority: 1),
-    FortuneItem('2', Colors.accents[2], priority: 5),
-    FortuneItem('3', Colors.accents[4], priority: 2),
-    FortuneItem('4', Colors.accents[6], priority: 2),
+    FortuneItem('2', Colors.accents[2], priority: 10),
+    FortuneItem('3', Colors.accents[4], priority: 1),
+    FortuneItem('4', Colors.accents[6], priority: 1),
     FortuneItem('5', Colors.accents[8], priority: 1),
+    FortuneItem('6', Colors.accents[10], priority: 1),
+    FortuneItem('7', Colors.accents[12], priority: 1),
+    FortuneItem('8', Colors.accents[14], priority: 1),
   ];
 
   final List<FortuneItem> _anNhau = <FortuneItem>[
@@ -73,6 +73,13 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _resultsHistoryController.close();
+    _resultWheelController.close();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
@@ -87,7 +94,7 @@ class _MyAppState extends State<MyApp> {
               const SizedBox(height: 32),
               Center(
                 child: FortunerWheel(
-                  items: _anNhau,
+                  items: _listPrioty,
                   onChanged: (FortuneItem item) {
                     _resultWheelController.add(item);
                   },
@@ -127,6 +134,8 @@ class _MyAppState extends State<MyApp> {
                     _resultsHistory.add(item);
                     _resultsHistoryController.add(_resultsHistory);
                   },
+                  onAnimationEnd: () => print('onAnimationEnd'),
+                  onAnimationStart: () => print('onAnimationStart'),
                 ),
               ),
               _buildResult(),
@@ -186,7 +195,7 @@ class _MyAppState extends State<MyApp> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             itemBuilder: (context, index) {
               return Text(
-                '${index + 1}: ${_resultsHistory[index].value}',
+                'Quay Lần ${index + 1}: ${_resultsHistory[index].value}',
                 style: const TextStyle(fontSize: 16),
               );
             },

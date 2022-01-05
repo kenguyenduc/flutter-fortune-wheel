@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_fortune_wheel/src/arrow_view.dart';
 import 'package:flutter_fortune_wheel/src/models/fortune_item.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
@@ -29,7 +28,8 @@ class _BoardViewState extends State<BoardView> {
       MediaQuery.of(context).size.shortestSide * 0.8);
 
   ///Xử lý tính độ xoay của giá trị may mắn
-  double _getRotateOfItem(int index) => (index / widget.items.length) * 2 * pi;
+  double _getRotateOfItem(int index) =>
+      (index / widget.items.length) * 2 * pi + pi / 2;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,7 @@ class _BoardViewState extends State<BoardView> {
         alignment: Alignment.center,
         children: <Widget>[
           Transform.rotate(
-            angle: -(widget.current + widget.angle) * 2 * pi,
+            angle: widget.angle + widget.current,
             child: Stack(
               alignment: Alignment.center,
               children: <Widget>[
