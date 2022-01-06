@@ -66,7 +66,7 @@ class _BoardViewState extends State<BoardView> {
     return Transform.rotate(
       angle: _rotate,
       child: ClipPath(
-        clipper: _LuckPath(_angle),
+        clipper: _SlicesPath(_angle),
         child: Container(
           height: size.height,
           width: size.width,
@@ -74,7 +74,10 @@ class _BoardViewState extends State<BoardView> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [fortuneItem.color, fortuneItem.color.withOpacity(0)],
+              colors: [
+                fortuneItem.backgroundColor,
+                fortuneItem.backgroundColor.withOpacity(0)
+              ],
             ),
           ),
         ),
@@ -102,7 +105,7 @@ class _BoardViewState extends State<BoardView> {
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold),
                   minFontSize: 12,
-                  maxFontSize: 18,
+                  maxFontSize: 16,
                   overflow: TextOverflow.clip,
                 ),
               ),
@@ -119,24 +122,24 @@ class _BoardViewState extends State<BoardView> {
   }
 }
 
-class _LuckPath extends CustomClipper<Path> {
+class _SlicesPath extends CustomClipper<Path> {
   final double angle;
 
-  _LuckPath(this.angle);
+  _SlicesPath(this.angle);
 
   @override
   Path getClip(Size size) {
-    Path _path = Path();
     Offset _center = size.center(Offset.zero);
     Rect _rect = Rect.fromCircle(center: _center, radius: size.width / 2);
-    _path.moveTo(_center.dx, _center.dy);
-    _path.arcTo(_rect, -pi / 2 - angle / 2, angle, false);
-    _path.close();
+    Path _path = Path()
+      ..moveTo(_center.dx, _center.dy)
+      ..arcTo(_rect, -pi / 2 - angle / 2, angle, false)
+      ..close();
     return _path;
   }
 
   @override
-  bool shouldReclip(_LuckPath oldClipper) {
+  bool shouldReclip(_SlicesPath oldClipper) {
     return angle != oldClipper.angle;
   }
 }
