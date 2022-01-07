@@ -101,9 +101,11 @@ class _BoardViewState extends State<BoardView> {
             children: [
               Expanded(
                 child: AutoSizeText(
-                  fortuneItem.value,
+                  fortuneItem.titleName,
                   style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
                   minFontSize: 12,
                   maxFontSize: 16,
                   overflow: TextOverflow.clip,
@@ -119,6 +121,17 @@ class _BoardViewState extends State<BoardView> {
         ),
       ),
     );
+  }
+
+  bool _isColorDark(Color color) {
+    double darkness = 1 -
+        ((0.299 * color.red) + (0.587 * color.green) + (0.114 * color.blue)) /
+            255;
+    if (darkness < 0.5) {
+      return false; // It's a light color
+    } else {
+      return true; // It's a dark color
+    }
   }
 }
 
