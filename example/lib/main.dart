@@ -1,13 +1,15 @@
 import 'dart:async';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:flutter_fortune_wheel_example/common/constants.dart';
+import 'package:flutter_fortune_wheel_example/pages/fortune_wheel_history_page.dart';
+import 'package:flutter_fortune_wheel_example/pages/fortune_wheel_setting_page.dart';
+import 'package:flutter_fortune_wheel_example/models/wheel.dart';
 
 void main() {
   runApp(const MaterialApp(
     home: MyApp(),
-    title: 'Example',
+    title: 'Vòng xoay may mắn',
   ));
 }
 
@@ -19,55 +21,18 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  ///Hệ số ưu tiên
-  int numberBonusPriority = 1;
+  final StreamController<Fortune> _resultWheelController =
+      StreamController<Fortune>.broadcast();
 
-  final List<FortuneItem> _fortuneValues = <FortuneItem>[
-    FortuneItem('1', Colors.accents[0], icon: const Icon(Icons.person_sharp)),
-    FortuneItem('2', Colors.accents[2], icon: const Icon(Icons.favorite)),
-    FortuneItem('3', Colors.accents[4], icon: const Icon(Icons.star)),
-    FortuneItem('4', Colors.accents[6]),
-    FortuneItem('5', Colors.accents[8]),
-    FortuneItem('6', Colors.accents[10]),
-    FortuneItem('7', Colors.accents[12]),
-    FortuneItem('8', Colors.accents[14]),
-    FortuneItem('9', Colors.accents[15]),
-    FortuneItem('10', Colors.accents[3]),
-    FortuneItem('11', Colors.accents[5]),
-    FortuneItem('12', Colors.accents[7]),
-  ];
-  final List<FortuneItem> _listPrioty = <FortuneItem>[
-    FortuneItem('1', Colors.accents[0], priority: 1),
-    FortuneItem('2', Colors.accents[2], priority: 5),
-    FortuneItem('3', Colors.accents[4], priority: 2),
-    FortuneItem('4', Colors.accents[6], priority: 2),
-    FortuneItem('5', Colors.accents[8], priority: 1),
-  ];
+  final List<Fortune> _resultsHistory = <Fortune>[];
+  final StreamController<bool> _rebuildWheelController =
+      StreamController<bool>.broadcast();
 
-  final List<FortuneItem> _anNhau = <FortuneItem>[
-    FortuneItem('Uống 0.5 ly', Colors.accents[14],
-        icon: const Icon(Icons.person_sharp)),
-    FortuneItem('Bên trái uống 1 ly', Colors.accents[2],
-        icon: const Icon(Icons.favorite)),
-    FortuneItem('Qua tua', Colors.accents[4], icon: const Icon(Icons.star)),
-    FortuneItem('Chỉ ai đó bất kỳ uống', Colors.accents[6],
-        icon: const Icon(Icons.stream)),
-    FortuneItem('Quay lại', Colors.accents[8], icon: const Icon(Icons.build)),
-    FortuneItem('Được ăn mồi', Colors.accents[10],
-        icon: const Icon(Icons.phone_android_outlined)),
-    FortuneItem('Uống 2 ly', Colors.accents[12],
-        icon: const Icon(Icons.extension)),
-    FortuneItem(
-        'Uống 2 ly test chuỗi dài dài dài dài dài dài dài', Colors.green,
-        icon: const Icon(Icons.message)),
-  ];
-
-  final StreamController<FortuneItem> _resultWheelController =
-  StreamController<FortuneItem>.broadcast();
-
-  final List<FortuneItem> _resultsHistory = <FortuneItem>[];
-  final StreamController<List<FortuneItem>> _resultsHistoryController =
-  StreamController<List<FortuneItem>>.broadcast();
+  Wheel _wheel = Wheel(
+    // fortuneValues: Constants.listAnNhau,
+    fortuneValues: Constants.list8Item,
+    isGoByPriority: false,
+  );
 
   @override
   void initState() {
@@ -75,67 +40,133 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _resultWheelController.close();
+    _rebuildWheelController.close();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text('Vòng quay may mắn'),
-        ),
-        body: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FortunerWheel(
-                  items: _listPrioty,
-                  onChanged: (FortuneItem item) {
-                    _resultWheelController.add(item);
-                  },
-                  onResult: (FortuneItem item) {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          backgroundColor: Colors.white,
-                          title: const Text('Test'),
-                          content: Text('Result: ${item.value}'),
-                        );
-                      },
-                    );
-                    _resultsHistory.add(item);
-                    _resultsHistoryController.add(_resultsHistory);
-                  },
-                ),
-                _buildResult(),
-                _buildResultsHistory(),
-                const RoulettePageWidget(),
-                SizedBox(
-                  height: 200,
-                  child: ListWheelScrollView.useDelegate(
-                    itemExtent: 75,
-                    childDelegate: ListWheelChildBuilderDelegate(
-                        builder: (BuildContext context, int index) {
-                          if (index < 0 || index > 10) {
-                            return null;
-                          }
-                          return ListTile(
-                            leading: Icon(Icons.favorite, size: 50),
-                            title: Text('${index}'),
-                            subtitle: Text('Description here'),
-                          );
-                        }),
+          title: const Text('Vòng xoay may mắn'),
+          actions: [
+            IconButton(
+              splashRadius: 28,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FortuneWheelHistoryPage(
+                        resultsHistory: _resultsHistory),
                   ),
-                )
-              ],
+                );
+              },
+              icon: const Icon(Icons.bar_chart),
             ),
+            IconButton(
+              splashRadius: 28,
+              onPressed: () async {
+                _rebuildWheelController.add(false);
+                final Wheel? result = await Navigator.push(
+                  context,
+                  MaterialPageRoute<Wheel>(
+                    builder: (context) =>
+                        FortuneWheelSettingPage(wheel: _wheel),
+                  ),
+                );
+                if (result != null) {
+                  setState(() {
+                    _wheel = result;
+                  });
+                }
+                _rebuildWheelController.add(true);
+              },
+              icon: const Icon(Icons.settings),
+            ),
+          ],
+        ),
+        endDrawerEnableOpenDragGesture: false,
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 32),
+              _buildFortuneWheel(),
+              _buildResultIsChange(),
+              const SizedBox(height: 16),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildResult() {
-    return StreamBuilder<FortuneItem>(
+  Widget _buildFortuneWheel() {
+    return Center(
+      child: StreamBuilder(
+        stream: _rebuildWheelController.stream,
+        builder: (context, snapshot) {
+          if (snapshot.data == false) {
+            return const SizedBox();
+          }
+          return FortuneWheel(
+            key: const ValueKey<String>('ValueKeyFortunerWheel'),
+            items: _wheel.fortuneValues,
+            isGoByPriority: _wheel.isGoByPriority,
+            duration: _wheel.duration,
+            onChanged: (Fortune item) {
+              _resultWheelController.add(item);
+            },
+            onResult: _onResult,
+          );
+        },
+      ),
+    );
+  }
+
+  void _onResult(Fortune item) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          contentPadding: const EdgeInsets.all(8),
+          title: const Text(
+            'Xin chúc mừng!',
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: 20,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                item.titleName.toString(),
+                style: const TextStyle(fontSize: 16),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Đóng'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    _resultsHistory.add(item);
+  }
+
+  Widget _buildResultIsChange() {
+    return StreamBuilder<Fortune>(
       stream: _resultWheelController.stream,
       builder: (context, snapshot) {
         if (snapshot.data != null) {
@@ -144,7 +175,7 @@ class _MyAppState extends State<MyApp> {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Text(
-                snapshot.data!.value,
+                snapshot.data!.titleName,
                 style: const TextStyle(
                   fontSize: 16,
                   color: Colors.red,
@@ -156,114 +187,6 @@ class _MyAppState extends State<MyApp> {
         }
         return const SizedBox();
       },
-    );
-  }
-
-  Widget _buildResultsHistory() {
-    return StreamBuilder<List<FortuneItem>>(
-      stream: _resultsHistoryController.stream,
-      builder: (context, snapshot) {
-        if (snapshot.data != null) {
-          return ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _resultsHistory.length,
-            itemBuilder: (context, index) {
-              return Text('${index + 1}: ${_resultsHistory[index].value}');
-            },
-          );
-        }
-        return const SizedBox();
-      },
-    );
-  }
-}
-
-class RoulettePageWidget extends StatefulWidget {
-  const RoulettePageWidget({Key? key}) : super(key: key);
-
-  @override
-  _RoulettePageWidgetState createState() => _RoulettePageWidgetState();
-}
-
-class _RoulettePageWidgetState extends State<RoulettePageWidget>
-    with SingleTickerProviderStateMixin {
-  late Animation<double> _animation;
-  late Tween<double> _tween;
-  late AnimationController _animationController;
-  late final Animation _rotateAnim;
-  final Random _random = Random();
-
-  int position = 0;
-
-  double getRandomAngle() {
-    return pi * 2 / 25 * _random.nextInt(25);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController =
-        AnimationController(duration: const Duration(seconds: 2), vsync: this);
-    _rotateAnim = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.fastLinearToSlowEaseIn,
-    );
-  }
-
-  void setNewPosition() {
-    _tween.begin = _tween.end;
-    _animationController.reset();
-    _tween.end = getRandomAngle();
-    _animationController.forward();
-  }
-
-  Future<void> _gameLoop() async {
-    _animationController.forward();
-    _tween.begin = _tween.end;
-    _animationController.reset();
-    _tween.end = _tween.end ?? 0 + pi * 2 + 100;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Center(
-            child: AnimatedBuilder(
-              animation:_rotateAnim,
-              builder: (context, child) =>
-                  Transform.rotate(
-                    angle: _animation.value,
-                    child: const Icon(
-                      Icons.arrow_upward,
-                      size: 100.0,
-                    ),
-                  ),
-            )),
-        TextButton(
-          child: const Text('SPIN'),
-          onPressed: setNewPosition,
-        ),
-        ElevatedButton(
-          child: const Text('SPIN180'),
-          onPressed: () {
-            // _tween.begin = _tween.end;
-            // _animationController.reset();
-            // _tween.end = pi/2;
-            _animationController.forward(from: 0.0).then((value) {
-              _tween.begin = _tween.end;
-              _animationController.reset();
-            });
-          },
-        ),
-        ElevatedButton(
-          child: Text('SPIN360'),
-          onPressed: () {
-            // _gameLoop();
-          },
-        )
-      ],
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_fortune_wheel/src/models/fortune_item.dart';
+import 'package:flutter_fortune_wheel/src/models/models.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 class BoardView extends StatefulWidget {
@@ -8,7 +8,7 @@ class BoardView extends StatefulWidget {
   final double current;
 
   ///List value of wheel
-  final List<FortuneItem> items;
+  final List<Fortune> items;
 
   const BoardView({
     Key? key,
@@ -28,7 +28,8 @@ class _BoardViewState extends State<BoardView> {
       MediaQuery.of(context).size.shortestSide * 0.8);
 
   ///Xử lý tính độ xoay của giá trị may mắn
-  double _getRotateOfItem(int index) => (index / widget.items.length) * 2 * pi;
+  double _getRotateOfItem(int index) =>
+      (index / widget.items.length) * 2 * pi + pi / 2;
 
   @override
   Widget build(BuildContext context) {
@@ -45,32 +46,27 @@ class _BoardViewState extends State<BoardView> {
         alignment: Alignment.center,
         children: <Widget>[
           Transform.rotate(
-            angle: -(widget.current + widget.angle) * 2 * pi,
+            angle: widget.angle + widget.current,
             child: Stack(
               alignment: Alignment.center,
               children: <Widget>[
-                for (FortuneItem item in widget.items) ...[_buildCard(item)],
-                for (FortuneItem item in widget.items) ...[_buildValue(item)],
+                for (Fortune item in widget.items) ...[_buildCard(item)],
+                for (Fortune item in widget.items) ...[_buildValue(item)],
               ],
             ),
           ),
-          // SizedBox(
-          //   height: size.height,
-          //   width: size.width,
-          //   child: const ArrowView(),
-          // ),
         ],
       ),
     );
   }
 
-  Widget _buildCard(FortuneItem fortuneItem) {
+  Widget _buildCard(Fortune fortuneItem) {
     double _rotate = _getRotateOfItem(widget.items.indexOf(fortuneItem));
     double _angle = 2 * pi / widget.items.length;
     return Transform.rotate(
       angle: _rotate,
       child: ClipPath(
-        clipper: _LuckPath(_angle),
+        clipper: _SlicesPath(_angle),
         child: Container(
           height: size.height,
           width: size.width,
@@ -78,7 +74,10 @@ class _BoardViewState extends State<BoardView> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [fortuneItem.color, fortuneItem.color.withOpacity(0)],
+              colors: [
+                fortuneItem.backgroundColor,
+                fortuneItem.backgroundColor.withOpacity(0)
+              ],
             ),
           ),
         ),
@@ -86,8 +85,8 @@ class _BoardViewState extends State<BoardView> {
     );
   }
 
-  Widget _buildValue(FortuneItem fortuneItem) {
-    double _rotate = _getRotateOfItem(widget.items.indexOf(fortuneItem));
+  Widget _buildValue(Fortune fortune) {
+    double _rotate = _getRotateOfItem(widget.items.indexOf(fortune));
     return Transform.rotate(
       angle: _rotate,
       child: Container(
@@ -102,18 +101,20 @@ class _BoardViewState extends State<BoardView> {
             children: [
               Expanded(
                 child: AutoSizeText(
-                  fortuneItem.value,
+                  fortune.titleName,
                   style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
                   minFontSize: 12,
-                  maxFontSize: 18,
+                  maxFontSize: 16,
                   overflow: TextOverflow.clip,
                 ),
               ),
-              if (fortuneItem.icon != null)
+              if (fortune.icon != null)
                 Padding(
                   padding: const EdgeInsets.all(8),
-                  child: fortuneItem.icon!,
+                  child: fortune.icon!,
                 ),
             ],
           ),
@@ -123,24 +124,24 @@ class _BoardViewState extends State<BoardView> {
   }
 }
 
-class _LuckPath extends CustomClipper<Path> {
+class _SlicesPath extends CustomClipper<Path> {
   final double angle;
 
-  _LuckPath(this.angle);
+  _SlicesPath(this.angle);
 
   @override
   Path getClip(Size size) {
-    Path _path = Path();
     Offset _center = size.center(Offset.zero);
     Rect _rect = Rect.fromCircle(center: _center, radius: size.width / 2);
-    _path.moveTo(_center.dx, _center.dy);
-    _path.arcTo(_rect, -pi / 2 - angle / 2, angle, false);
-    _path.close();
+    Path _path = Path()
+      ..moveTo(_center.dx, _center.dy)
+      ..arcTo(_rect, -pi / 2 - angle / 2, angle, false)
+      ..close();
     return _path;
   }
 
   @override
-  bool shouldReclip(_LuckPath oldClipper) {
+  bool shouldReclip(_SlicesPath oldClipper) {
     return angle != oldClipper.angle;
   }
 }
