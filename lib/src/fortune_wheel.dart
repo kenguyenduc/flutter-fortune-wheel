@@ -2,11 +2,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/src/arrow_view.dart';
 import 'package:flutter_fortune_wheel/src/board_view.dart';
-import 'package:flutter_fortune_wheel/src/helpers/fortune_item_helper.dart';
-import 'package:flutter_fortune_wheel/src/models/fortune_item.dart';
+import 'package:flutter_fortune_wheel/src/helpers/helpers.dart';
+import 'package:flutter_fortune_wheel/src/models/models.dart';
 
-class FortunerWheel extends StatefulWidget {
-  const FortunerWheel({
+class FortuneWheel extends StatefulWidget {
+  const FortuneWheel({
     Key? key,
     required this.items,
     required this.onChanged,
@@ -14,12 +14,12 @@ class FortunerWheel extends StatefulWidget {
     this.onAnimationStart,
     this.onAnimationEnd,
     this.duration = const Duration(milliseconds: 5000),
-    this.rotationCount = 100,
+    this.rotationCount = 50,
     this.isGoByPriority = true,
   }) : super(key: key);
 
   ///Danh sách các phần tử giá trị của vòng quay
-  final List<FortuneItem> items;
+  final List<Fortune> items;
 
   ///Thời gian quay
   final Duration duration;
@@ -28,10 +28,10 @@ class FortunerWheel extends StatefulWidget {
   final int rotationCount;
 
   ///Xử lý cập nhật kết quả thay đổi các giá trị khi đang quay
-  final Function(FortuneItem item) onChanged;
+  final Function(Fortune item) onChanged;
 
   ///Xứ lý trả về kết quả vòng xoay
-  final Function(FortuneItem item) onResult;
+  final Function(Fortune item) onResult;
 
   ///Xử lý khi bắt đầu quay
   final VoidCallback? onAnimationStart;
@@ -45,11 +45,14 @@ class FortunerWheel extends StatefulWidget {
   final bool isGoByPriority;
 
   @override
-  _FortunerWheelState createState() => _FortunerWheelState();
+  _FortuneWheelState createState() => _FortuneWheelState();
 }
 
-class _FortunerWheelState extends State<FortunerWheel>
+class _FortuneWheelState extends State<FortuneWheel>
     with SingleTickerProviderStateMixin {
+  late AnimationController _wheelAnimationController;
+  late Animation _wheelAnimation;
+
   ///Góc xoay của bánh xe
   ///Default ban đầu [_angle]=0
   double _angle = 0;
@@ -58,13 +61,14 @@ class _FortunerWheelState extends State<FortunerWheel>
   ///Default ban đầu [_currentAngle]=0
   double _currentAngle = 0;
 
-  ///Giá trị kết quả xoay
+  ///index giá trị phần thưởng kim chi xoay hiện tại đang đứng
   int _currentIndex = 0;
-  late AnimationController _wheelAnimationController;
-  late Animation _wheelAnimation;
+
+  ///index kết quả vòng quay sau khi quay
+  int _indexResult = 0;
 
   ///Danh sách phần tử vòng xoay được lấy theo ưu tiên quay trúng
-  late List<FortuneItem> _fortuneValuesByPriority;
+  late List<Fortune> _fortuneValuesByPriority;
 
   @override
   void initState() {
@@ -90,10 +94,10 @@ class _FortunerWheelState extends State<FortunerWheel>
       builder: (context, child) {
         final animationValue = _wheelAnimation.value;
         final angle = animationValue * _angle;
+
         if (_wheelAnimationController.isAnimating) {
-          ///todo: check
-          final index = _getIndexFortune(angle + _currentAngle);
-          widget.onChanged.call(widget.items[index]);
+          _indexResult = _getIndexFortune(angle + _currentAngle);
+          widget.onChanged.call(widget.items[_indexResult]);
         }
         return Stack(
           alignment: Alignment.center,
@@ -104,7 +108,7 @@ class _FortunerWheelState extends State<FortunerWheel>
               angle: angle,
             ),
             _buildCenterOfWheel(),
-            _buildGo(),
+            _buildButtonSpin(),
             SizedBox(
               height: MediaQuery.of(context).size.shortestSide * 0.8,
               width: MediaQuery.of(context).size.shortestSide * 0.8,
@@ -125,13 +129,13 @@ class _FortunerWheelState extends State<FortunerWheel>
   }
 
   ///UI Button quay
-  Widget _buildGo() {
+  Widget _buildButtonSpin() {
     return Visibility(
       visible: !_wheelAnimationController.isAnimating,
       child: TextButton(
         onPressed: widget.isGoByPriority
-            ? _handleGoByPriorityPressed
-            : _handleGoRandomPressed,
+            ? _handleSpinByPriorityPressed
+            : _handleSpinByRandomPressed,
         style: TextButton.styleFrom(
           backgroundColor: Colors.black.withOpacity(0.4),
         ),
@@ -144,70 +148,19 @@ class _FortunerWheelState extends State<FortunerWheel>
   }
 
   ///Xử lý xoay ngẫu nhiên
-  Future<void> _handleGoRandomPressed() async {
+  Future<void> _handleSpinByRandomPressed() async {
     if (!_wheelAnimationController.isAnimating) {
-      double _random = Random().nextDouble();
-      _angle = (20 + Random().nextInt(5) + _random) * 2 * pi;
+      double randomDouble = Random().nextDouble();
+      int randomLength = Random().nextInt(widget.items.length);
+      _angle = (randomDouble + widget.rotationCount + randomLength) * 2 * pi;
       await Future.microtask(() => widget.onAnimationStart?.call());
       await _wheelAnimationController.forward(from: 0.0).then((_) {
         double factor = _currentAngle / (2 * pi);
         factor += _angle / (2 * pi);
         factor %= 1;
         _currentAngle = factor * 2 * pi;
-
-        ///Lấy kết quả vòng quay
-        ///todo: check
-        // final animationValue = _wheelAnimation.value;
-        // final angle = _wheelAnimation.value * _angle / (2 * pi);
-        final angle = _wheelAnimation.value * _angle;
-        final int index = _getIndexFortune(angle + _currentAngle);
-        widget.onResult.call(widget.items[index]);
+        widget.onResult.call(widget.items[_indexResult]);
         _wheelAnimationController.reset();
-        // print('_currentAngle: $_currentAngle');
-        // print('_currentAngle de: ${_currentAngle * 180 / pi}');
-        // print('angleRadian de: ${angleRadian * 180 / pi}');
-      });
-      await Future.microtask(() => widget.onAnimationEnd?.call());
-    }
-  }
-
-  // int _testIndex(double value) {
-  //   var divider = 360 / widget.items.length;
-  //   var offset = divider / 2;
-  //   return (((value * 180 / pi + offset).ceil() % 360) / divider).floor();
-  // }
-  //
-  // int _getIndexFortuneItem(value) {
-  //   double _base = (2 * pi / widget.items.length / 2) / (2 * pi);
-  //   return (((_base + value) % 1) * widget.items.length).floor();
-  // }
-
-  ///Xử lý xoay theo giá trị ưu tiên quay trúng
-  Future<void> _handleGoByPriorityPressed() async {
-    if (!_wheelAnimationController.isAnimating) {
-      ///random index trong danh sách được tạo theo ưu tiên quay trúng
-      final int randomIndex = Random().nextInt(_fortuneValuesByPriority.length);
-      FortuneItem luckResult = _fortuneValuesByPriority[randomIndex];
-      int index = widget.items.indexWhere((element) => element == luckResult);
-      if (index == -1) {
-        index = 0;
-      }
-
-      ///Tính góc xoay đến giá trị quay trúng
-      _angle = (2 * pi / widget.items.length) *
-              (_currentIndex > index
-                  ? _currentIndex - index
-                  : widget.items.length - (index - _currentIndex)) +
-          widget.rotationCount * pi;
-      await Future.microtask(() => widget.onAnimationStart?.call());
-      await _wheelAnimationController.forward(from: 0.0).then((_) {
-        double factor = _currentAngle / (2 * pi);
-        factor += (_angle / (2 * pi));
-        factor %= 1;
-        _currentAngle = factor * 2 * pi;
-        _wheelAnimationController.reset();
-        _currentIndex = index;
-        widget.onResult.call(widget.items[index]);
       });
       await Future.microtask(() => widget.onAnimationEnd?.call());
     }
@@ -216,6 +169,40 @@ class _FortunerWheelState extends State<FortunerWheel>
   ///Xử lý tính toán giá trị index của phần tử khi đang quay
   int _getIndexFortune(double value) {
     int itemCount = widget.items.length;
-    return (itemCount - value / (2 * pi) * itemCount).floor() % itemCount;
+    double rightOffset = value - (pi / (widget.items.length));
+    return (itemCount - rightOffset / (2 * pi) * itemCount).floor() % itemCount;
+  }
+
+  ///Xử lý xoay theo giá trị ưu tiên quay trúng
+  Future<void> _handleSpinByPriorityPressed() async {
+    if (!_wheelAnimationController.isAnimating) {
+      ///random index trong danh sách được tạo theo ưu tiên quay trúng
+      final int randomIndex = Random().nextInt(_fortuneValuesByPriority.length);
+      Fortune luckResult = _fortuneValuesByPriority[randomIndex];
+      int index = widget.items.indexWhere((element) => element == luckResult);
+      if (index == -1) {
+        _indexResult = 0;
+      } else {
+        _indexResult = index;
+      }
+
+      ///Tính góc xoay đến giá trị quay trúng
+      _angle = (2 * pi / widget.items.length) *
+              (_currentIndex > _indexResult
+                  ? _currentIndex - _indexResult
+                  : widget.items.length - (_indexResult - _currentIndex)) +
+          widget.rotationCount * 2 * pi;
+      await Future.microtask(() => widget.onAnimationStart?.call());
+      await _wheelAnimationController.forward(from: 0.0).then((_) {
+        double factor = _currentAngle / (2 * pi);
+        factor += (_angle / (2 * pi));
+        factor %= 1;
+        _currentAngle = factor * 2 * pi;
+        _wheelAnimationController.reset();
+        _currentIndex = _indexResult;
+        widget.onResult.call(widget.items[_indexResult]);
+      });
+      await Future.microtask(() => widget.onAnimationEnd?.call());
+    }
   }
 }

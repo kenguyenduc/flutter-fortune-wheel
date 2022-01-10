@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 
+///UI Form sửa thông tin giá trị vòng quay
 class CustomFormFortuneAddEdit extends StatefulWidget {
   const CustomFormFortuneAddEdit({
     Key? key,
@@ -8,8 +9,8 @@ class CustomFormFortuneAddEdit extends StatefulWidget {
     required this.onChanged,
   }) : super(key: key);
 
-  final FortuneItem fortuneItem;
-  final Function(FortuneItem fortuneItem) onChanged;
+  final Fortune fortuneItem;
+  final Function(Fortune fortuneItem) onChanged;
 
   @override
   _CustomFormFortuneAddEditState createState() =>
@@ -20,7 +21,7 @@ class _CustomFormFortuneAddEditState extends State<CustomFormFortuneAddEdit> {
   final TextEditingController _titleItemController = TextEditingController();
   final TextEditingController _priorityController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late FortuneItem _fortuneItem;
+  late Fortune _fortuneItem;
 
   @override
   void initState() {
@@ -119,7 +120,7 @@ class _CustomFormFortuneAddEditState extends State<CustomFormFortuneAddEdit> {
                       ),
                     );
                   }).toList(),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 16),

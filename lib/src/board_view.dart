@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_fortune_wheel/src/models/fortune_item.dart';
+import 'package:flutter_fortune_wheel/src/models/models.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 class BoardView extends StatefulWidget {
@@ -8,7 +8,7 @@ class BoardView extends StatefulWidget {
   final double current;
 
   ///List value of wheel
-  final List<FortuneItem> items;
+  final List<Fortune> items;
 
   const BoardView({
     Key? key,
@@ -50,8 +50,8 @@ class _BoardViewState extends State<BoardView> {
             child: Stack(
               alignment: Alignment.center,
               children: <Widget>[
-                for (FortuneItem item in widget.items) ...[_buildCard(item)],
-                for (FortuneItem item in widget.items) ...[_buildValue(item)],
+                for (Fortune item in widget.items) ...[_buildCard(item)],
+                for (Fortune item in widget.items) ...[_buildValue(item)],
               ],
             ),
           ),
@@ -60,7 +60,7 @@ class _BoardViewState extends State<BoardView> {
     );
   }
 
-  Widget _buildCard(FortuneItem fortuneItem) {
+  Widget _buildCard(Fortune fortuneItem) {
     double _rotate = _getRotateOfItem(widget.items.indexOf(fortuneItem));
     double _angle = 2 * pi / widget.items.length;
     return Transform.rotate(
@@ -85,8 +85,8 @@ class _BoardViewState extends State<BoardView> {
     );
   }
 
-  Widget _buildValue(FortuneItem fortuneItem) {
-    double _rotate = _getRotateOfItem(widget.items.indexOf(fortuneItem));
+  Widget _buildValue(Fortune fortune) {
+    double _rotate = _getRotateOfItem(widget.items.indexOf(fortune));
     return Transform.rotate(
       angle: _rotate,
       child: Container(
@@ -101,7 +101,7 @@ class _BoardViewState extends State<BoardView> {
             children: [
               Expanded(
                 child: AutoSizeText(
-                  fortuneItem.titleName,
+                  fortune.titleName,
                   style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -111,27 +111,16 @@ class _BoardViewState extends State<BoardView> {
                   overflow: TextOverflow.clip,
                 ),
               ),
-              if (fortuneItem.icon != null)
+              if (fortune.icon != null)
                 Padding(
                   padding: const EdgeInsets.all(8),
-                  child: fortuneItem.icon!,
+                  child: fortune.icon!,
                 ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  bool _isColorDark(Color color) {
-    double darkness = 1 -
-        ((0.299 * color.red) + (0.587 * color.green) + (0.114 * color.blue)) /
-            255;
-    if (darkness < 0.5) {
-      return false; // It's a light color
-    } else {
-      return true; // It's a dark color
-    }
   }
 }
 

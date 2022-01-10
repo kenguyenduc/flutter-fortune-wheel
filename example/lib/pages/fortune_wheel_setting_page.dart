@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_fortune_wheel_example/common/constants.dart';
-import 'package:flutter_fortune_wheel_example/custom_form_fortune_add_edit.dart';
-import 'models/wheel.dart';
+import 'package:flutter_fortune_wheel_example/widgets/custom_form_fortune_add_edit.dart';
+import 'package:flutter_fortune_wheel_example/widgets/fortune_item.dart';
+import 'package:flutter_fortune_wheel_example/widgets/fortune_template.dart';
+import '../models/wheel.dart';
 
 class FortuneWheelSettingPage extends StatefulWidget {
   const FortuneWheelSettingPage({
@@ -26,6 +28,9 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
   final TextEditingController _durationWheelController =
       TextEditingController();
 
+  final StreamController<bool> _rebuildWheelController =
+      StreamController<bool>.broadcast();
+
   @override
   void initState() {
     super.initState();
@@ -41,45 +46,45 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: const Text('Cấu hình'),
-          actions: [
-            IconButton(
-              splashRadius: 28,
-              tooltip: 'Save',
-              onPressed: () {
-                Navigator.pop(context, _wheel);
-              },
-              icon: const Icon(Icons.save),
-            ),
-          ],
+    return WillPopScope(
+      onWillPop: () async {
+        _handleConfirmBack();
+        return false;
+      },
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            title: const Text('Cấu hình'),
+            actions: [
+              IconButton(
+                splashRadius: 28,
+                tooltip: 'Save',
+                onPressed: () {
+                  Navigator.pop(context, _wheel);
+                },
+                icon: const Icon(Icons.save),
+              ),
+            ],
+          ),
+          body: _buildBody(),
         ),
-        body: _buildBody(),
       ),
     );
   }
 
   Widget _buildBody() {
     return SafeArea(
-      child: WillPopScope(
-        onWillPop: () async {
-          _handleConfirmBack();
-          return false;
-        },
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Column(
-              children: [
-                _buildGameMode(),
-                _buildDuration(),
-                _buildFortuneValues(),
-              ],
-            ),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: Column(
+            children: [
+              _buildGameMode(),
+              _buildDuration(),
+              _buildExpansionFortuneValues(),
+            ],
           ),
         ),
       ),
@@ -272,7 +277,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
     );
   }
 
-  Widget _buildFortuneValues() {
+  Widget _buildExpansionFortuneValues() {
     return ExpansionTile(
       initiallyExpanded: true,
       title: const Text(
@@ -292,77 +297,103 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
             Align(
                 alignment: Alignment.centerLeft,
                 child: ElevatedButton(
-                    onPressed: () {
-                      _rebuildWheelController.add(false);
-                      _wheel =
-                          _wheel.copyWith(fortuneValues: Constants.listAnNhau);
-                      _rebuildWheelController.add(true);
-                    },
-                    child: const Text('Lấy danh sách mặc định'))),
+                    onPressed: _handleGetDefaultTemplate,
+                    child: const Text('Chọn mẫu mặc định'))),
           ],
         ),
-        StreamBuilder(
-            stream: _rebuildWheelController.stream,
-            builder: (context, snapshot) {
-              if (snapshot.data == false) {
-                return const SizedBox();
-              }
-              return ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _wheel.fortuneValues.length,
-                itemBuilder: (context, index) => ListTile(
-                  title: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _wheel.fortuneValues[index].titleName,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(width: 16),
-                          Text(
-                            ' x' +
-                                _wheel.fortuneValues[index].priority.toString(),
-                            style: const TextStyle(fontStyle: FontStyle.italic),
-                          ),
-                          const SizedBox(width: 24),
-                          CircleAvatar(
-                            radius: 12,
-                            backgroundColor:
-                                _wheel.fortuneValues[index].backgroundColor,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () => _handleEditFortuneItemPressed(index),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () => _handleDeleteFortuneItemPressed(index),
-                      ),
-                    ],
-                  ),
-                ),
-                separatorBuilder: (context, index) => const Divider(),
-              );
-            })
+        _buildFortuneValues(),
       ],
     );
   }
 
-  final StreamController<bool> _rebuildWheelController =
-      StreamController<bool>.broadcast();
+  Widget _buildFortuneValues() {
+    return StreamBuilder(
+      stream: _rebuildWheelController.stream,
+      builder: (context, snapshot) {
+        if (snapshot.data == false) {
+          return const SizedBox();
+        }
+        return ListView.separated(
+          key: const ValueKey<String>('FortuneValues'),
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: _wheel.fortuneValues.length,
+          padding: const EdgeInsets.all(16),
+          itemBuilder: (context, index) => FortuneItem(
+            key: ValueKey<String>(
+                'fortuneWheelItem<${_wheel.fortuneValues[index].id}>'),
+            fortune: _wheel.fortuneValues[index],
+            onEditPressed: () => _handleEditFortuneItemPressed(index),
+            onDeletePressed: () => _handleDeleteFortuneItemPressed(index),
+          ),
+          separatorBuilder: (context, index) => const Divider(),
+        );
+      },
+    );
+  }
+
+  void _handleGetDefaultTemplate() {
+    List<FortuneTemplate> templates = <FortuneTemplate>[
+      FortuneTemplate(
+        title: 'Ai sẽ phải uống?',
+        fortuneValues: Constants.actionDrinkBeerList,
+        onPressed: () {
+          _wheel =
+              _wheel.copyWith(fortuneValues: Constants.actionDrinkBeerList);
+        },
+      ),
+      FortuneTemplate(
+        title: 'Hôm nay ăn gì?',
+        fortuneValues: Constants.todayWhatDoEat,
+        onPressed: () {
+          _wheel = _wheel.copyWith(fortuneValues: Constants.todayWhatDoEat);
+        },
+      ),
+      FortuneTemplate(
+        title: 'Có hoặc không?',
+        fortuneValues: Constants.yesOrNo,
+        onPressed: () {
+          _wheel = _wheel.copyWith(fortuneValues: Constants.yesOrNo);
+        },
+      ),
+      FortuneTemplate(
+        title: 'Yêu hoặc không yêu?',
+        fortuneValues: Constants.loveOrNotLove,
+        onPressed: () {
+          _wheel = _wheel.copyWith(fortuneValues: Constants.loveOrNotLove);
+        },
+      ),
+      FortuneTemplate(
+        title: 'Chọn số',
+        fortuneValues: Constants.numbers,
+        onPressed: () {
+          _wheel = _wheel.copyWith(fortuneValues: Constants.numbers);
+        },
+      ),
+    ];
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Chọn mẫu mặc định'),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: templates,
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Hủy'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Future<void> _handleInsertItem() async {
     await showDialog(
@@ -371,8 +402,12 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
       builder: (context) {
         return AlertDialog(
           content: CustomFormFortuneAddEdit(
-            fortuneItem: FortuneItem('',
-                Colors.primaries[Random().nextInt(Colors.primaries.length)]),
+            fortuneItem: Fortune(
+              id: _wheel.fortuneValues.length + 1,
+              titleName: '',
+              backgroundColor:
+                  Colors.primaries[Random().nextInt(Colors.primaries.length)],
+            ),
             onChanged: (fortuneItem) {
               setState(() {
                 _wheel.fortuneValues.add(fortuneItem);

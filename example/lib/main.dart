@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_fortune_wheel_example/common/constants.dart';
-import 'package:flutter_fortune_wheel_example/fortune_wheel_setting_page.dart';
+import 'package:flutter_fortune_wheel_example/pages/fortune_wheel_history_page.dart';
+import 'package:flutter_fortune_wheel_example/pages/fortune_wheel_setting_page.dart';
 import 'package:flutter_fortune_wheel_example/models/wheel.dart';
 
 void main() {
@@ -20,16 +21,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final StreamController<FortuneItem> _resultWheelController =
-      StreamController<FortuneItem>.broadcast();
+  final StreamController<Fortune> _resultWheelController =
+      StreamController<Fortune>.broadcast();
 
-  final List<FortuneItem> _resultsHistory = <FortuneItem>[];
-  final StreamController<List<FortuneItem>> _resultsHistoryController =
-      StreamController<List<FortuneItem>>.broadcast();
+  final List<Fortune> _resultsHistory = <Fortune>[];
+  final StreamController<bool> _rebuildWheelController =
+      StreamController<bool>.broadcast();
 
   Wheel _wheel = Wheel(
-    fortuneValues: Constants.listAnNhau,
-    isGoByPriority: true,
+    // fortuneValues: Constants.listAnNhau,
+    fortuneValues: Constants.list8Item,
+    isGoByPriority: false,
   );
 
   @override
@@ -40,8 +42,8 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     super.dispose();
-    _resultsHistoryController.close();
     _resultWheelController.close();
+    _rebuildWheelController.close();
   }
 
   @override
@@ -54,7 +56,15 @@ class _MyAppState extends State<MyApp> {
           actions: [
             IconButton(
               splashRadius: 28,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FortuneWheelHistoryPage(
+                        resultsHistory: _resultsHistory),
+                  ),
+                );
+              },
               icon: const Icon(Icons.bar_chart),
             ),
             IconButton(
@@ -86,21 +96,9 @@ class _MyAppState extends State<MyApp> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 32),
-              _buildFortunerWheel(),
+              _buildFortuneWheel(),
               _buildResultIsChange(),
               const SizedBox(height: 16),
-              // const Padding(
-              //   padding: EdgeInsets.all(16.0),
-              //   child: Text(
-              //     'Danh sách kết quả vòng quay:',
-              //     style: TextStyle(
-              //       color: Colors.green,
-              //       fontSize: 18,
-              //       fontWeight: FontWeight.bold,
-              //     ),
-              //   ),
-              // ),
-              // _buildResultsHistory(),
             ],
           ),
         ),
@@ -108,10 +106,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  final StreamController<bool> _rebuildWheelController =
-      StreamController<bool>.broadcast();
-
-  Widget _buildFortunerWheel() {
+  Widget _buildFortuneWheel() {
     return Center(
       child: StreamBuilder(
         stream: _rebuildWheelController.stream,
@@ -119,13 +114,12 @@ class _MyAppState extends State<MyApp> {
           if (snapshot.data == false) {
             return const SizedBox();
           }
-          return FortunerWheel(
+          return FortuneWheel(
             key: const ValueKey<String>('ValueKeyFortunerWheel'),
             items: _wheel.fortuneValues,
-            // isGoByPriority: _wheel.isGoByPriority,
-            isGoByPriority: true,
+            isGoByPriority: _wheel.isGoByPriority,
             duration: _wheel.duration,
-            onChanged: (FortuneItem item) {
+            onChanged: (Fortune item) {
               _resultWheelController.add(item);
             },
             onResult: _onResult,
@@ -135,7 +129,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  void _onResult(FortuneItem item) {
+  void _onResult(Fortune item) {
     showDialog(
       context: context,
       builder: (context) {
@@ -169,11 +163,10 @@ class _MyAppState extends State<MyApp> {
       },
     );
     _resultsHistory.add(item);
-    _resultsHistoryController.add(_resultsHistory);
   }
 
   Widget _buildResultIsChange() {
-    return StreamBuilder<FortuneItem>(
+    return StreamBuilder<Fortune>(
       stream: _resultWheelController.stream,
       builder: (context, snapshot) {
         if (snapshot.data != null) {
@@ -190,29 +183,6 @@ class _MyAppState extends State<MyApp> {
                 ),
               ),
             ),
-          );
-        }
-        return const SizedBox();
-      },
-    );
-  }
-
-  Widget _buildResultsHistory() {
-    return StreamBuilder<List<FortuneItem>>(
-      stream: _resultsHistoryController.stream,
-      builder: (context, snapshot) {
-        if (snapshot.data != null) {
-          return ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _resultsHistory.length,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            itemBuilder: (context, index) {
-              return Text(
-                'Quay Lần ${index + 1}: ${_resultsHistory[index].titleName}',
-                style: const TextStyle(fontSize: 16),
-              );
-            },
           );
         }
         return const SizedBox();

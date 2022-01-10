@@ -1,1 +1,1 @@
-export 'fortune_item_helper.dart';
+export 'fortune_helper.dart';

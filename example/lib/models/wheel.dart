@@ -9,17 +9,17 @@ class Wheel {
     this.isGoByPriority = true,
   });
 
-  final List<FortuneItem> fortuneValues;
+  final List<Fortune> fortuneValues;
   final Duration duration;
   final bool isGoByPriority;
 
   @override
   String toString() {
-    return 'Wheel{fortuneValues: $fortuneValues, isGoByPriority: $isGoByPriority, duration:$duration}';
+    return 'Wheel{ fortuneValues: $fortuneValues, isGoByPriority: $isGoByPriority, duration:$duration}';
   }
 
   Wheel copyWith({
-    List<FortuneItem>? fortuneValues,
+    List<Fortune>? fortuneValues,
     Duration? duration,
     bool? isGoByPriority,
   }) {
