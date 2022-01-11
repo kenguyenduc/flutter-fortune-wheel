@@ -13,7 +13,7 @@ class FortuneWheel extends StatefulWidget {
     required this.onResult,
     this.onAnimationStart,
     this.onAnimationEnd,
-    this.duration = const Duration(milliseconds: 5000),
+    this.duration = const Duration(milliseconds: 10000),
     this.rotationCount = 50,
     this.isGoByPriority = true,
   }) : super(key: key);

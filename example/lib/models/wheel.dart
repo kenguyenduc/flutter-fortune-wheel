@@ -5,7 +5,7 @@ import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 class Wheel {
   const Wheel({
     required this.fortuneValues,
-    this.duration = const Duration(milliseconds: 5000),
+    this.duration = const Duration(milliseconds: 10000),
     this.isGoByPriority = true,
   });
 

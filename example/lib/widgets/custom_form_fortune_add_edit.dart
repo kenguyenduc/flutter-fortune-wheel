@@ -7,10 +7,12 @@ class CustomFormFortuneAddEdit extends StatefulWidget {
     Key? key,
     required this.fortuneItem,
     required this.onChanged,
+    this.isInsert = false,
   }) : super(key: key);
 
   final Fortune fortuneItem;
   final Function(Fortune fortuneItem) onChanged;
+  final bool isInsert;
 
   @override
   _CustomFormFortuneAddEditState createState() =>
@@ -46,9 +48,9 @@ class _CustomFormFortuneAddEditState extends State<CustomFormFortuneAddEdit> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'Sửa giá trị may mắn',
-              style: TextStyle(
+            Text(
+              widget.isInsert ? 'Thêm giá trị may mắn' : 'Sửa giá trị may mắn',
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.blue,

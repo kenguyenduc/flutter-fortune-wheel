@@ -28,20 +28,21 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
   final TextEditingController _durationWheelController =
       TextEditingController();
 
-  final StreamController<bool> _rebuildWheelController =
-      StreamController<bool>.broadcast();
+  late final StreamController<bool> _fortuneValuesController;
 
   @override
   void initState() {
     super.initState();
     _wheel = widget.wheel;
     _durationWheelController.text = _wheel.duration.inSeconds.toString();
+    _fortuneValuesController = StreamController<bool>.broadcast();
   }
 
   @override
   void dispose() {
     super.dispose();
     _durationWheelController.dispose();
+    _fortuneValuesController.close();
   }
 
   @override
@@ -307,12 +308,9 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
   }
 
   Widget _buildFortuneValues() {
-    return StreamBuilder(
-      stream: _rebuildWheelController.stream,
+    return StreamBuilder<bool>(
+      stream: _fortuneValuesController.stream,
       builder: (context, snapshot) {
-        if (snapshot.data == false) {
-          return const SizedBox();
-        }
         return ListView.separated(
           key: const ValueKey<String>('FortuneValues'),
           shrinkWrap: true,
@@ -340,6 +338,8 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         onPressed: () {
           _wheel =
               _wheel.copyWith(fortuneValues: Constants.actionDrinkBeerList);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
         },
       ),
       FortuneTemplate(
@@ -347,6 +347,8 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         fortuneValues: Constants.todayWhatDoEat,
         onPressed: () {
           _wheel = _wheel.copyWith(fortuneValues: Constants.todayWhatDoEat);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
         },
       ),
       FortuneTemplate(
@@ -354,6 +356,8 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         fortuneValues: Constants.yesOrNo,
         onPressed: () {
           _wheel = _wheel.copyWith(fortuneValues: Constants.yesOrNo);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
         },
       ),
       FortuneTemplate(
@@ -361,6 +365,8 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         fortuneValues: Constants.loveOrNotLove,
         onPressed: () {
           _wheel = _wheel.copyWith(fortuneValues: Constants.loveOrNotLove);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
         },
       ),
       FortuneTemplate(
@@ -368,6 +374,8 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         fortuneValues: Constants.numbers,
         onPressed: () {
           _wheel = _wheel.copyWith(fortuneValues: Constants.numbers);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
         },
       ),
     ];
@@ -402,6 +410,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
       builder: (context) {
         return AlertDialog(
           content: CustomFormFortuneAddEdit(
+            isInsert: true,
             fortuneItem: Fortune(
               id: _wheel.fortuneValues.length + 1,
               titleName: '',
@@ -409,9 +418,8 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
                   Colors.primaries[Random().nextInt(Colors.primaries.length)],
             ),
             onChanged: (fortuneItem) {
-              setState(() {
-                _wheel.fortuneValues.add(fortuneItem);
-              });
+              _wheel.fortuneValues.add(fortuneItem);
+              _fortuneValuesController.sink.add(true);
               Navigator.pop(context);
             },
           ),
@@ -429,9 +437,8 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
           content: CustomFormFortuneAddEdit(
             fortuneItem: _wheel.fortuneValues[index],
             onChanged: (fortuneItem) {
-              setState(() {
-                _wheel.fortuneValues[index] = fortuneItem;
-              });
+              _wheel.fortuneValues[index] = fortuneItem;
+              _fortuneValuesController.sink.add(true);
               Navigator.pop(context);
             },
           ),
@@ -454,9 +461,8 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
       child: const Text('Xác nhận'),
       onPressed: () {
         Navigator.pop(context);
-        setState(() {
-          _wheel.fortuneValues.removeAt(index);
-        });
+        _wheel.fortuneValues.removeAt(index);
+        _fortuneValuesController.sink.add(true);
       },
       style: TextButton.styleFrom(
         primary: Colors.blue,

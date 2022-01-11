@@ -103,11 +103,11 @@ class _BoardViewState extends State<BoardView> {
                 child: AutoSizeText(
                   fortune.titleName,
                   style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                   minFontSize: 12,
-                  maxFontSize: 16,
+                  maxFontSize: 20,
                   overflow: TextOverflow.clip,
                 ),
               ),

@@ -25,12 +25,11 @@ class _MyAppState extends State<MyApp> {
       StreamController<Fortune>.broadcast();
 
   final List<Fortune> _resultsHistory = <Fortune>[];
-  final StreamController<bool> _rebuildWheelController =
+  final StreamController<bool> _fortuneWheelController =
       StreamController<bool>.broadcast();
 
   Wheel _wheel = Wheel(
-    // fortuneValues: Constants.listAnNhau,
-    fortuneValues: Constants.list8Item,
+    fortuneValues: Constants.todayWhatDoEat,
     isGoByPriority: false,
   );
 
@@ -43,7 +42,7 @@ class _MyAppState extends State<MyApp> {
   void dispose() {
     super.dispose();
     _resultWheelController.close();
-    _rebuildWheelController.close();
+    _fortuneWheelController.close();
   }
 
   @override
@@ -70,7 +69,6 @@ class _MyAppState extends State<MyApp> {
             IconButton(
               splashRadius: 28,
               onPressed: () async {
-                _rebuildWheelController.add(false);
                 final Wheel? result = await Navigator.push(
                   context,
                   MaterialPageRoute<Wheel>(
@@ -79,11 +77,9 @@ class _MyAppState extends State<MyApp> {
                   ),
                 );
                 if (result != null) {
-                  setState(() {
-                    _wheel = result;
-                  });
+                  _wheel = result;
+                  _fortuneWheelController.sink.add(true);
                 }
-                _rebuildWheelController.add(true);
               },
               icon: const Icon(Icons.settings),
             ),
@@ -109,18 +105,15 @@ class _MyAppState extends State<MyApp> {
   Widget _buildFortuneWheel() {
     return Center(
       child: StreamBuilder(
-        stream: _rebuildWheelController.stream,
+        stream: _fortuneWheelController.stream,
         builder: (context, snapshot) {
-          if (snapshot.data == false) {
-            return const SizedBox();
-          }
           return FortuneWheel(
             key: const ValueKey<String>('ValueKeyFortunerWheel'),
             items: _wheel.fortuneValues,
             isGoByPriority: _wheel.isGoByPriority,
             duration: _wheel.duration,
             onChanged: (Fortune item) {
-              _resultWheelController.add(item);
+              _resultWheelController.sink.add(item);
             },
             onResult: _onResult,
           );
@@ -141,18 +134,21 @@ class _MyAppState extends State<MyApp> {
             style: TextStyle(
               color: Colors.red,
               fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              const SizedBox(height: 16),
               Text(
                 item.titleName.toString(),
-                style: const TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 20, color: item.backgroundColor),
               ),
+              const SizedBox(height: 16),
               Align(
                 alignment: Alignment.centerRight,
-                child: TextButton(
+                child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text('Đóng'),
                 ),

@@ -5,9 +5,21 @@ class Constants {
   Constants._();
 
   static List<Fortune> list8Item = <Fortune>[
-    Fortune(id: 1, titleName: '1', backgroundColor: Colors.primaries[0]),
-    Fortune(id: 2, titleName: '2', backgroundColor: Colors.primaries[2]),
-    Fortune(id: 3, titleName: '3', backgroundColor: Colors.primaries[4]),
+    Fortune(
+        id: 1,
+        titleName: '1',
+        backgroundColor: Colors.primaries[0],
+        priority: 10),
+    Fortune(
+        id: 2,
+        titleName: '2',
+        backgroundColor: Colors.primaries[2],
+        priority: 5),
+    Fortune(
+        id: 3,
+        titleName: '3',
+        backgroundColor: Colors.primaries[4],
+        priority: 2),
     Fortune(id: 4, titleName: '4', backgroundColor: Colors.primaries[6]),
     Fortune(id: 5, titleName: '5', backgroundColor: Colors.primaries[8]),
     Fortune(id: 6, titleName: '6', backgroundColor: Colors.primaries[10]),
@@ -42,12 +54,12 @@ class Constants {
         id: 1,
         titleName: '1',
         backgroundColor: Colors.primaries[0],
-        priority: 1),
+        priority: 10),
     Fortune(
         id: 2,
         titleName: '2',
         backgroundColor: Colors.primaries[2],
-        priority: 1),
+        priority: 20),
     Fortune(
         id: 3,
         titleName: '3',
@@ -128,14 +140,12 @@ class Constants {
         id: 2,
         titleName: 'Bên trái uống 1 ly',
         backgroundColor: Colors.primaries[2]),
-    Fortune(
-        id: 3, titleName: 'Qua tua', backgroundColor: Colors.primaries[4]),
+    Fortune(id: 3, titleName: 'Qua tua', backgroundColor: Colors.primaries[4]),
     Fortune(
         id: 4,
         titleName: 'Chỉ ai đó bất kỳ uống',
         backgroundColor: Colors.primaries[6]),
-    Fortune(
-        id: 5, titleName: 'Quay lại', backgroundColor: Colors.primaries[8]),
+    Fortune(id: 5, titleName: 'Quay lại', backgroundColor: Colors.primaries[8]),
     Fortune(
         id: 6, titleName: 'Được ăn mồi', backgroundColor: Colors.primaries[10]),
     Fortune(
@@ -166,17 +176,18 @@ class Constants {
   static List<Fortune> todayWhatDoEat = <Fortune>[
     const Fortune(id: 1, titleName: 'Phở', backgroundColor: Colors.red),
     const Fortune(
-        id: 2, titleName: 'Cơm gà', backgroundColor: Colors.green),
+      id: 2,
+      titleName: 'Cơm gà',
+      backgroundColor: Colors.green,
+      priority: 10,
+    ),
     const Fortune(
         id: 3,
         titleName: 'Cơm chiên dương châu',
         backgroundColor: Colors.amber),
-    const Fortune(
-        id: 4, titleName: 'Bún rêu cua', backgroundColor: Colors.red),
-    const Fortune(
-        id: 5, titleName: 'Bánh mì', backgroundColor: Colors.green),
-    const Fortune(
-        id: 6, titleName: 'Hải sản', backgroundColor: Colors.amber),
+    const Fortune(id: 4, titleName: 'Bún rêu cua', backgroundColor: Colors.red),
+    const Fortune(id: 5, titleName: 'Bánh mì', backgroundColor: Colors.green),
+    const Fortune(id: 6, titleName: 'Hải sản', backgroundColor: Colors.amber),
     const Fortune(id: 7, titleName: 'Cơm tấm', backgroundColor: Colors.red),
     const Fortune(id: 8, titleName: 'Pizza', backgroundColor: Colors.amber),
   ];
@@ -184,22 +195,12 @@ class Constants {
   ///Yêu hoặc không yêu?
   static List<Fortune> loveOrNotLove = <Fortune>[
     const Fortune(id: 1, titleName: 'Yêu', backgroundColor: Colors.red),
-    const Fortune(
-        id: 2, titleName: 'Không yêu', backgroundColor: Colors.green),
+    const Fortune(id: 2, titleName: 'Không yêu', backgroundColor: Colors.green),
     const Fortune(id: 3, titleName: 'Yêu', backgroundColor: Colors.amber),
-    const Fortune(
-        id: 4, titleName: 'Không yêu', backgroundColor: Colors.pink),
+    const Fortune(id: 4, titleName: 'Không yêu', backgroundColor: Colors.pink),
     const Fortune(id: 5, titleName: 'Yêu', backgroundColor: Colors.blue),
-    const Fortune(
-        id: 6, titleName: 'Không yêu', backgroundColor: Colors.red),
+    const Fortune(id: 6, titleName: 'Không yêu', backgroundColor: Colors.red),
     const Fortune(id: 7, titleName: 'Yêu', backgroundColor: Colors.green),
-    const Fortune(
-        id: 8, titleName: 'Không yêu', backgroundColor: Colors.amber),
-    const Fortune(id: 9, titleName: 'Yêu', backgroundColor: Colors.pink),
-    const Fortune(
-        id: 10, titleName: 'Không yêu', backgroundColor: Colors.blue),
-    const Fortune(id: 11, titleName: 'Yêu', backgroundColor: Colors.red),
-    const Fortune(
-        id: 12, titleName: 'Không yêu', backgroundColor: Colors.green),
+    const Fortune(id: 8, titleName: 'Không yêu', backgroundColor: Colors.amber),
   ];
 }
