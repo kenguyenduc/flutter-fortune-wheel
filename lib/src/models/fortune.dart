@@ -10,10 +10,14 @@ class Fortune extends Equatable {
     required this.backgroundColor,
     this.priority = 1,
     this.icon,
+    this.textStyle,
+    this.titleimage,
+    this.backgroundImage,
   }) : assert(
           priority >= 0,
           'Priority value should be greater than or equal to 0.',
         );
+
   final int id;
   final String titleName;
   final Color backgroundColor;
@@ -22,9 +26,14 @@ class Fortune extends Equatable {
   ///Mặc định [priority] = 1
   final int priority;
   final Widget? icon;
+  final TextStyle? textStyle;
+
+  //todo: thêm 1 số option
+  final Widget? titleimage;
+  final Widget? backgroundImage;
 
   @override
-  List<Object?> get props => [id, titleName, priority];
+  List<Object?> get props => [id, titleName, priority, backgroundColor, icon];
 
   Fortune copyWith({
     String? titleName,

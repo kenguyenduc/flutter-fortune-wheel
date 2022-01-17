@@ -29,8 +29,9 @@ class _MyAppState extends State<MyApp> {
       StreamController<bool>.broadcast();
 
   Wheel _wheel = Wheel(
-    fortuneValues: Constants.todayWhatDoEat,
+    fortuneValues: Constants.list12Item,
     isGoByPriority: false,
+    duration: const Duration(seconds: 5),
   );
 
   @override
@@ -69,6 +70,7 @@ class _MyAppState extends State<MyApp> {
             IconButton(
               splashRadius: 28,
               onPressed: () async {
+                _fortuneWheelController.add(false);
                 final Wheel? result = await Navigator.push(
                   context,
                   MaterialPageRoute<Wheel>(
@@ -78,8 +80,8 @@ class _MyAppState extends State<MyApp> {
                 );
                 if (result != null) {
                   _wheel = result;
-                  _fortuneWheelController.sink.add(true);
                 }
+                _fortuneWheelController.add(true);
               },
               icon: const Icon(Icons.settings),
             ),
@@ -104,9 +106,12 @@ class _MyAppState extends State<MyApp> {
 
   Widget _buildFortuneWheel() {
     return Center(
-      child: StreamBuilder(
+      child: StreamBuilder<bool>(
         stream: _fortuneWheelController.stream,
         builder: (context, snapshot) {
+          if (snapshot.data == false) {
+            return const SizedBox.shrink();
+          }
           return FortuneWheel(
             key: const ValueKey<String>('ValueKeyFortunerWheel'),
             items: _wheel.fortuneValues,

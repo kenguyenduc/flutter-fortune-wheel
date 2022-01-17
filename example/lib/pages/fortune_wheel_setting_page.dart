@@ -370,7 +370,16 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         },
       ),
       FortuneTemplate(
-        title: 'Chọn số',
+        title: 'Chọn số (1- 12)',
+        fortuneValues: Constants.list12Item,
+        onPressed: () {
+          _wheel = _wheel.copyWith(fortuneValues: Constants.list12Item);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
+        },
+      ),
+      FortuneTemplate(
+        title: 'Chọn số (1- 16)',
         fortuneValues: Constants.numbers,
         onPressed: () {
           _wheel = _wheel.copyWith(fortuneValues: Constants.numbers);

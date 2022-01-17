@@ -4,6 +4,7 @@ import 'package:flutter_fortune_wheel/src/arrow_view.dart';
 import 'package:flutter_fortune_wheel/src/board_view.dart';
 import 'package:flutter_fortune_wheel/src/helpers/helpers.dart';
 import 'package:flutter_fortune_wheel/src/models/models.dart';
+import 'core/core.dart';
 
 class FortuneWheel extends StatefulWidget {
   const FortuneWheel({
@@ -73,6 +74,8 @@ class _FortuneWheelState extends State<FortuneWheel>
   @override
   void initState() {
     super.initState();
+    //todo: delete
+    print('FortuneWheel initState');
     _wheelAnimationController =
         AnimationController(vsync: this, duration: widget.duration);
     _wheelAnimation = CurvedAnimation(
@@ -84,46 +87,66 @@ class _FortuneWheelState extends State<FortuneWheel>
   @override
   void dispose() {
     super.dispose();
+    print('FortuneWheel dispose');
     _wheelAnimationController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _wheelAnimation,
-      builder: (context, child) {
-        final animationValue = _wheelAnimation.value;
-        final angle = animationValue * _angle;
+    return PanAwareBuilder(
+      physics: CircularPanPhysics(),
+      onFling: widget.isGoByPriority
+          ? _handleSpinByPriorityPressed
+          : _handleSpinByRandomPressed,
+      builder: (BuildContext context, PanState panState) {
+        return AnimatedBuilder(
+          animation: _wheelAnimation,
+          builder: (context, _) {
+            final size = MediaQuery.of(context).size;
+            final meanSize = (size.width + size.height) / 2;
+            final panFactor = 6 / meanSize;
 
-        if (_wheelAnimationController.isAnimating) {
-          _indexResult = _getIndexFortune(angle + _currentAngle);
-          widget.onChanged.call(widget.items[_indexResult]);
-        }
-        return Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-            BoardView(
-              items: widget.items,
-              current: _currentAngle,
-              angle: angle,
-            ),
-            _buildCenterOfWheel(),
-            _buildButtonSpin(),
-            SizedBox(
-              height: MediaQuery.of(context).size.shortestSide * 0.8,
-              width: MediaQuery.of(context).size.shortestSide * 0.8,
-              child: const Align(
-                alignment: Alignment(1.08, 0),
-                child: ArrowView(),
-              ),
-            ),
-          ],
+            final animationValue = _wheelAnimation.value;
+            final angle = animationValue * _angle;
+
+            if (_wheelAnimationController.isAnimating) {
+              _indexResult = _getIndexFortune(angle + _currentAngle);
+              widget.onChanged.call(widget.items[_indexResult]);
+            }
+            return Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final panAngle = panState.distance * panFactor;
+                    final rotationAngle =
+                        2 * pi * widget.rotationCount * _wheelAnimation.value;
+                    return BoardView(
+                      items: widget.items,
+                      current: _currentAngle + rotationAngle + panAngle,
+                      angle: angle,
+                    );
+                  },
+                ),
+                _buildCenterOfWheel(),
+                _buildButtonSpin(),
+                SizedBox(
+                  height: MediaQuery.of(context).size.shortestSide * 0.8,
+                  width: MediaQuery.of(context).size.shortestSide * 0.8,
+                  child: const Align(
+                    alignment: Alignment(1.08, 0),
+                    child: ArrowView(),
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
-  ///UI Tâm của vòng tròn
+  ///UI Tâm của bánh xe
   Widget _buildCenterOfWheel() {
     return const CircleAvatar(radius: 16, backgroundColor: Colors.white);
   }
@@ -178,8 +201,8 @@ class _FortuneWheelState extends State<FortuneWheel>
     if (!_wheelAnimationController.isAnimating) {
       ///random index trong danh sách được tạo theo ưu tiên quay trúng
       final int randomIndex = Random().nextInt(_fortuneValuesByPriority.length);
-      Fortune luckResult = _fortuneValuesByPriority[randomIndex];
-      int index = widget.items.indexWhere((element) => element == luckResult);
+      Fortune result = _fortuneValuesByPriority[randomIndex];
+      int index = widget.items.indexWhere((element) => element == result);
       if (index == -1) {
         _indexResult = 0;
       } else {

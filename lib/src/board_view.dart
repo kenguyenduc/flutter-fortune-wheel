@@ -49,10 +49,8 @@ class _BoardViewState extends State<BoardView> {
             angle: widget.angle + widget.current,
             child: Stack(
               alignment: Alignment.center,
-              children: <Widget>[
-                for (Fortune item in widget.items) ...[_buildCard(item)],
-                for (Fortune item in widget.items) ...[_buildValue(item)],
-              ],
+              children: List.generate(widget.items.length,
+                  (index) => _buildSlicedCircle(widget.items[index])),
             ),
           ),
         ],
@@ -60,25 +58,35 @@ class _BoardViewState extends State<BoardView> {
     );
   }
 
-  Widget _buildCard(Fortune fortuneItem) {
-    double _rotate = _getRotateOfItem(widget.items.indexOf(fortuneItem));
-    double _angle = 2 * pi / widget.items.length;
+  Widget _buildSlicedCircle(Fortune fortune) {
+    double _rotate = _getRotateOfItem(widget.items.indexOf(fortune));
     return Transform.rotate(
       angle: _rotate,
-      child: ClipPath(
-        clipper: _SlicesPath(_angle),
-        child: Container(
-          height: size.height,
-          width: size.width,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                fortuneItem.backgroundColor,
-                fortuneItem.backgroundColor.withOpacity(0)
-              ],
-            ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          _buildCard(fortune),
+          _buildValue(fortune),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCard(Fortune fortune) {
+    double _angle = 2 * pi / widget.items.length;
+    return ClipPath(
+      clipper: _SlicesPath(_angle),
+      child: Container(
+        height: size.height,
+        width: size.width,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              fortune.backgroundColor,
+              fortune.backgroundColor.withOpacity(0)
+            ],
           ),
         ),
       ),
@@ -86,38 +94,33 @@ class _BoardViewState extends State<BoardView> {
   }
 
   Widget _buildValue(Fortune fortune) {
-    double _rotate = _getRotateOfItem(widget.items.indexOf(fortune));
-    return Transform.rotate(
-      angle: _rotate,
-      child: Container(
-        height: size.height,
-        width: size.width,
-        alignment: Alignment.topCenter,
-        padding: const EdgeInsets.only(top: 16),
-        child: ConstrainedBox(
-          constraints:
-              BoxConstraints.expand(height: size.height / 3, width: 44),
-          child: Column(
-            children: [
-              Expanded(
-                child: AutoSizeText(
-                  fortune.titleName,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  minFontSize: 12,
-                  maxFontSize: 20,
-                  overflow: TextOverflow.clip,
+    return Container(
+      height: size.height,
+      width: size.width,
+      alignment: Alignment.topCenter,
+      padding: const EdgeInsets.only(top: 16),
+      child: ConstrainedBox(
+        constraints: BoxConstraints.expand(height: size.height / 3, width: 44),
+        child: Column(
+          children: [
+            Expanded(
+              child: AutoSizeText(
+                fortune.titleName,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
+                minFontSize: 12,
+                maxFontSize: 20,
+                overflow: TextOverflow.clip,
               ),
-              if (fortune.icon != null)
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: fortune.icon!,
-                ),
-            ],
-          ),
+            ),
+            if (fortune.icon != null)
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: fortune.icon!,
+              ),
+          ],
         ),
       ),
     );
