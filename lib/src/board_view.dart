@@ -9,16 +9,14 @@ class BoardView extends StatefulWidget {
     required this.angle,
     required this.current,
     required this.items,
-    this.size,
+    this.radius,
   }) : super(key: key);
 
   final double angle;
   final double current;
-
-  ///List value of wheel
   final List<Fortune> items;
 
-  final Size? size;
+  final double? radius;
 
   @override
   State<StatefulWidget> createState() {
@@ -27,10 +25,8 @@ class BoardView extends StatefulWidget {
 }
 
 class _BoardViewState extends State<BoardView> {
-  Size get size =>
-      widget.size ??
-      Size(MediaQuery.of(context).size.shortestSide * 0.8,
-          MediaQuery.of(context).size.shortestSide * 0.8);
+  double get radius =>
+      widget.radius ?? MediaQuery.of(context).size.shortestSide * 0.8;
 
   ///Xử lý tính độ xoay của giá trị may mắn
   double _getRotateOfItem(int index) =>
@@ -39,8 +35,8 @@ class _BoardViewState extends State<BoardView> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: size.height,
-      width: size.width,
+      height: radius,
+      width: radius,
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
         boxShadow: [
@@ -54,8 +50,12 @@ class _BoardViewState extends State<BoardView> {
             angle: widget.angle + widget.current,
             child: Stack(
               alignment: Alignment.center,
-              children: List.generate(widget.items.length,
-                  (index) => _buildSlicedCircle(widget.items[index])),
+              children: List.generate(
+                widget.items.length,
+                (index) => _buildSlicedCircle(
+                  widget.items[index],
+                ),
+              ),
             ),
           ),
         ],
@@ -82,8 +82,8 @@ class _BoardViewState extends State<BoardView> {
     return ClipPath(
       clipper: _SlicesPath(_angle),
       child: Container(
-        height: size.height,
-        width: size.width,
+        height: radius,
+        width: radius,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -100,12 +100,12 @@ class _BoardViewState extends State<BoardView> {
 
   Widget _buildValue(Fortune fortune) {
     return Container(
-      height: size.height,
-      width: size.width,
+      height: radius,
+      width: radius,
       alignment: Alignment.topCenter,
       padding: const EdgeInsets.only(top: 16),
       child: ConstrainedBox(
-        constraints: BoxConstraints.expand(height: size.height / 3, width: 54),
+        constraints: BoxConstraints.expand(height: radius / 3, width: 54),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

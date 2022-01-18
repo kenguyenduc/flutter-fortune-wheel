@@ -28,7 +28,7 @@ class _MyAppState extends State<MyApp> {
       StreamController<bool>.broadcast();
 
   Wheel _wheel = Wheel(
-    fortuneValues: Constants.icons2,
+    items: Constants.icons2,
     // fortuneValues: Constants.icons,
     // fortuneValues: Constants.list12Item,
     isSpinByPriority: false,
@@ -110,15 +110,11 @@ class _MyAppState extends State<MyApp> {
           }
           return FortuneWheel(
             key: const ValueKey<String>('ValueKeyFortunerWheel'),
-            items: _wheel.fortuneValues,
-            isGoByPriority: _wheel.isSpinByPriority,
-            duration: _wheel.duration,
             wheel: _wheel,
             onChanged: (Fortune item) {
               _resultWheelController.sink.add(item);
             },
             onResult: _onResult,
-            titleSpinButton: _wheel.titleSpinButton,
           );
         },
       ),

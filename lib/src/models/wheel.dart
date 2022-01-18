@@ -6,7 +6,7 @@ import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 @immutable
 class Wheel extends Equatable {
   const Wheel({
-    required this.fortuneValues,
+    required this.items,
     this.duration = const Duration(seconds: 10),
     this.isSpinByPriority = true,
     this.radius,
@@ -16,11 +16,11 @@ class Wheel extends Equatable {
     this.spinButtonStyle,
     this.titleSpinButton,
     this.textStyleTitleSpinButton,
-  })  : assert(fortuneValues.length >= 2),
+  })  : assert(items.length >= 2),
         assert(rotationCount >= 0);
 
   ///Danh sách các phần tử may mắn
-  final List<Fortune> fortuneValues;
+  final List<Fortune> items;
 
   ///Thời gian quay
   final Duration duration;
@@ -54,9 +54,9 @@ class Wheel extends Equatable {
   final TextStyle? textStyleTitleSpinButton;
 
   Wheel copyWith({
-    List<Fortune>? fortuneValues,
+    List<Fortune>? items,
     Duration? duration,
-    bool? isGoByPriority,
+    bool? isSpinByPriority,
     int? rotationCount,
     double? radius,
     Widget? childSpinButton,
@@ -66,9 +66,9 @@ class Wheel extends Equatable {
     TextStyle? textStyleTitleSpinButton,
   }) {
     return Wheel(
-      fortuneValues: fortuneValues ?? this.fortuneValues,
+      items: items ?? this.items,
       duration: duration ?? this.duration,
-      isSpinByPriority: isGoByPriority ?? this.isSpinByPriority,
+      isSpinByPriority: isSpinByPriority ?? this.isSpinByPriority,
       rotationCount: rotationCount ?? this.rotationCount,
       radius: radius ?? this.radius,
       childSpinButton: childSpinButton ?? this.childSpinButton,
@@ -82,7 +82,7 @@ class Wheel extends Equatable {
 
   @override
   List<Object?> get props => [
-        fortuneValues,
+        items,
         duration,
         isSpinByPriority,
         rotationCount,
