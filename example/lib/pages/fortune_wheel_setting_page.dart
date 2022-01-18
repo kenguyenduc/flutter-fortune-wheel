@@ -7,7 +7,6 @@ import 'package:flutter_fortune_wheel_example/common/constants.dart';
 import 'package:flutter_fortune_wheel_example/widgets/custom_form_fortune_add_edit.dart';
 import 'package:flutter_fortune_wheel_example/widgets/fortune_item.dart';
 import 'package:flutter_fortune_wheel_example/widgets/fortune_template.dart';
-import '../models/wheel.dart';
 
 class FortuneWheelSettingPage extends StatefulWidget {
   const FortuneWheelSettingPage({
@@ -30,11 +29,15 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
 
   late final StreamController<bool> _fortuneValuesController;
 
+  final TextEditingController _titleSpinButtonController =
+      TextEditingController();
+
   @override
   void initState() {
     super.initState();
     _wheel = widget.wheel;
     _durationWheelController.text = _wheel.duration.inSeconds.toString();
+    _titleSpinButtonController.text = _wheel.titleSpinButton ?? '';
     _fortuneValuesController = StreamController<bool>.broadcast();
   }
 
@@ -55,7 +58,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: const Color(0xFFC3DBF8),
           appBar: AppBar(
             title: const Text('Cấu hình'),
             actions: [
@@ -84,6 +87,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
             children: [
               _buildGameMode(),
               _buildDuration(),
+              _buildEditTitle(),
               _buildExpansionFortuneValues(),
             ],
           ),
@@ -154,7 +158,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
             title: const Text('Theo ưu tiên'),
             leading: Radio<bool>(
               value: true,
-              groupValue: _wheel.isGoByPriority,
+              groupValue: _wheel.isSpinByPriority,
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onChanged: (_) {
                 setState(() {
@@ -175,7 +179,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
             },
             leading: Radio<bool>(
               value: false,
-              groupValue: _wheel.isGoByPriority,
+              groupValue: _wheel.isSpinByPriority,
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onChanged: (_) {
                 setState(() {
@@ -274,6 +278,31 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildEditTitle() {
+    return ListTile(
+      title: const Text(
+        'Tiêu đề nút quay',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      subtitle: Padding(
+        padding: const EdgeInsets.only(right: 8.0, left: 16),
+        child: TextFormField(
+          controller: _titleSpinButtonController,
+          keyboardType: TextInputType.text,
+          onChanged: (value) {
+            _wheel = _wheel.copyWith(
+              titleSpinButton: _titleSpinButtonController.text,
+            );
+          },
+          decoration: const InputDecoration(
+            hintText: 'Nhập tiêu đề nút quay',
+            hintStyle: TextStyle(color: Colors.grey),
+          ),
+        ),
       ),
     );
   }
@@ -383,6 +412,24 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         fortuneValues: Constants.numbers,
         onPressed: () {
           _wheel = _wheel.copyWith(fortuneValues: Constants.numbers);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
+        },
+      ),
+      FortuneTemplate(
+        title: 'Chọn phần thưởng (icon)',
+        fortuneValues: Constants.icons2,
+        onPressed: () {
+          _wheel = _wheel.copyWith(fortuneValues: Constants.icons2);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
+        },
+      ),
+      FortuneTemplate(
+        title: 'Icons',
+        fortuneValues: Constants.icons,
+        onPressed: () {
+          _wheel = _wheel.copyWith(fortuneValues: Constants.icons);
           _fortuneValuesController.sink.add(true);
           Navigator.pop(context);
         },

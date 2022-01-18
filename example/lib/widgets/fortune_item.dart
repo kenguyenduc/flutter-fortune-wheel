@@ -18,14 +18,23 @@ class FortuneItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      key: key,
       title: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            fortune.titleName,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (fortune.titleName != null)
+                Flexible(
+                  child: Text(
+                    fortune.titleName ?? '',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              if (fortune.titleName != null) const SizedBox(width: 16),
+              fortune.icon ?? const SizedBox(),
+            ],
           ),
           const SizedBox(height: 8),
           Row(
@@ -33,7 +42,7 @@ class FortuneItem extends StatelessWidget {
             children: [
               const SizedBox(width: 16),
               Text(
-                ' x' + fortune.priority.toString(),
+                '  x' + fortune.priority.toString(),
                 style: const TextStyle(fontStyle: FontStyle.italic),
               ),
               const SizedBox(width: 24),

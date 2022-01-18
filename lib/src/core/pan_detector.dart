@@ -1,4 +1,8 @@
-part of 'core.dart';
+import 'dart:async';
+import 'dart:math' as math;
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:quiver/core.dart';
 
 /// A class representing the current state of a [PanAwareBuilder].
 ///
@@ -175,7 +179,7 @@ class CircularPanPhysics extends PanPhysics {
   void handlePanUpdate(DragUpdateDetails details) {
     final Offset center = Offset(
       size.width / 2,
-      _math.min(size.width, size.height) / 2,
+      math.min(size.width, size.height) / 2,
     );
     final bool onTop = details.localPosition.dy <= center.dy;
     final bool onLeftSide = details.localPosition.dx <= center.dx;
@@ -260,9 +264,7 @@ class _PanAwareBuilderState extends State<PanAwareBuilder>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    print('PanAwareBuilderinitState');
     _animationController =
         AnimationController(vsync: this, duration: widget.physics.duration);
     _animation = CurvedAnimation(
@@ -274,20 +276,8 @@ class _PanAwareBuilderState extends State<PanAwareBuilder>
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
-    print('PanAwareBuilderdispose');
     _animationController.dispose();
-  }
-
-  @override
-  void didUpdateWidget(covariant PanAwareBuilder oldWidget) {
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
-    print('PanAwareBuilderdidUpdateWidget');
-    if (widget.physics.duration != oldWidget.physics.duration) {
-      _animationController.duration = widget.physics.duration;
-    }
   }
 
   Future<void> _onPanStateUpdate(PanState value) async {

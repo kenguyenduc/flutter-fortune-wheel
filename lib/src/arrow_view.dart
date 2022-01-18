@@ -11,19 +11,18 @@ class ArrowView extends StatelessWidget {
       child: ClipPath(
         clipper: _ArrowClipper(),
         child: Container(
+          height: 24,
+          width: 24,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              // colors: [Colors.redAccent, Colors.red],
               colors: [Colors.black12, Colors.black],
             ),
             boxShadow: [
               BoxShadow(color: Colors.black38, blurRadius: 5),
             ],
           ),
-          height: 24,
-          width: 24,
         ),
       ),
     );

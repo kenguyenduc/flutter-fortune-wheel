@@ -16,7 +16,9 @@ class FortuneWheel extends StatefulWidget {
     this.onAnimationEnd,
     this.duration = const Duration(milliseconds: 10000),
     this.rotationCount = 50,
+    required this.wheel,
     this.isGoByPriority = true,
+    this.titleSpinButton,
   }) : super(key: key);
 
   ///Danh sách các phần tử giá trị của vòng quay
@@ -27,6 +29,9 @@ class FortuneWheel extends StatefulWidget {
 
   ///Số vòng quay trước khi quay đến kết quả
   final int rotationCount;
+
+  ///Cấu hình vòng quay
+  final Wheel wheel;
 
   ///Xử lý cập nhật kết quả thay đổi các giá trị khi đang quay
   final Function(Fortune item) onChanged;
@@ -44,6 +49,8 @@ class FortuneWheel extends StatefulWidget {
   ///[isGoByPriority] = true : theo giá trị ưu tiên quay trúng
   ///[isGoByPriority] = false : quay ngẫu nhiên
   final bool isGoByPriority;
+
+  final String? titleSpinButton;
 
   @override
   _FortuneWheelState createState() => _FortuneWheelState();
@@ -87,8 +94,23 @@ class _FortuneWheelState extends State<FortuneWheel>
   @override
   void dispose() {
     super.dispose();
-    print('FortuneWheel dispose');
+    //todo: delete
+    print('FortuneWheel Dispose');
     _wheelAnimationController.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant FortuneWheel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    //todo: delete
+    print('FortuneWheel didUpdateWidget');
+    if (widget.duration != oldWidget.duration) {
+      _wheelAnimationController.duration = widget.duration;
+      _wheelAnimation = CurvedAnimation(
+        parent: _wheelAnimationController,
+        curve: Curves.fastLinearToSlowEaseIn,
+      );
+    }
   }
 
   @override
@@ -162,9 +184,9 @@ class _FortuneWheelState extends State<FortuneWheel>
         style: TextButton.styleFrom(
           backgroundColor: Colors.black.withOpacity(0.4),
         ),
-        child: const Text(
-          'Bấm vào đây để quay',
-          style: TextStyle(fontSize: 16, color: Colors.white),
+        child: Text(
+          widget.titleSpinButton ?? 'Bấm vào đây để quay',
+          style: const TextStyle(fontSize: 16, color: Colors.white),
         ),
       ),
     );

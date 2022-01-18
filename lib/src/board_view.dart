@@ -4,18 +4,21 @@ import 'package:flutter_fortune_wheel/src/models/models.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 class BoardView extends StatefulWidget {
+  const BoardView({
+    Key? key,
+    required this.angle,
+    required this.current,
+    required this.items,
+    this.size,
+  }) : super(key: key);
+
   final double angle;
   final double current;
 
   ///List value of wheel
   final List<Fortune> items;
 
-  const BoardView({
-    Key? key,
-    required this.angle,
-    required this.current,
-    required this.items,
-  }) : super(key: key);
+  final Size? size;
 
   @override
   State<StatefulWidget> createState() {
@@ -24,8 +27,10 @@ class BoardView extends StatefulWidget {
 }
 
 class _BoardViewState extends State<BoardView> {
-  Size get size => Size(MediaQuery.of(context).size.shortestSide * 0.8,
-      MediaQuery.of(context).size.shortestSide * 0.8);
+  Size get size =>
+      widget.size ??
+      Size(MediaQuery.of(context).size.shortestSide * 0.8,
+          MediaQuery.of(context).size.shortestSide * 0.8);
 
   ///Xử lý tính độ xoay của giá trị may mắn
   double _getRotateOfItem(int index) =>
@@ -100,24 +105,27 @@ class _BoardViewState extends State<BoardView> {
       alignment: Alignment.topCenter,
       padding: const EdgeInsets.only(top: 16),
       child: ConstrainedBox(
-        constraints: BoxConstraints.expand(height: size.height / 3, width: 44),
+        constraints: BoxConstraints.expand(height: size.height / 3, width: 54),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
-              child: AutoSizeText(
-                fortune.titleName,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+            if (fortune.titleName != null)
+              Flexible(
+                child: AutoSizeText(
+                  fortune.titleName!,
+                  style: fortune.textStyle ??
+                      const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                  minFontSize: 10,
+                  maxFontSize: 20,
+                  overflow: TextOverflow.clip,
                 ),
-                minFontSize: 12,
-                maxFontSize: 20,
-                overflow: TextOverflow.clip,
               ),
-            ),
             if (fortune.icon != null)
               Padding(
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(fortune.titleName != null ? 8 : 0),
                 child: fortune.icon!,
               ),
           ],

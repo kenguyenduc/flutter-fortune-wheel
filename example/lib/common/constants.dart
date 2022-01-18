@@ -275,4 +275,130 @@ class Constants {
     const Fortune(id: 7, titleName: 'Yêu', backgroundColor: Colors.green),
     const Fortune(id: 8, titleName: 'Không yêu', backgroundColor: Colors.amber),
   ];
+
+  static List<Fortune> icons = <Fortune>[
+    const Fortune(
+        id: 1,
+        backgroundColor: Colors.red,
+        icon: Icon(
+          Icons.favorite,
+          color: Colors.white,
+        )),
+    const Fortune(
+        id: 2,
+        backgroundColor: Colors.green,
+        icon: Icon(
+          Icons.lock_clock,
+          color: Colors.white,
+        )),
+    const Fortune(
+        id: 3,
+        backgroundColor: Colors.amber,
+        icon: Icon(
+          Icons.car_rental,
+          color: Colors.white,
+        )),
+    const Fortune(
+        id: 4,
+        backgroundColor: Colors.red,
+        icon: Icon(
+          Icons.phone_android_outlined,
+          color: Colors.white,
+        )),
+    const Fortune(
+        id: 5,
+        backgroundColor: Colors.green,
+        icon: Icon(
+          Icons.house_outlined,
+          color: Colors.white,
+        )),
+    const Fortune(
+        id: 6,
+        backgroundColor: Colors.amber,
+        icon: Icon(
+          Icons.security,
+          color: Colors.white,
+        )),
+    const Fortune(
+        id: 7,
+        backgroundColor: Colors.red,
+        icon: Icon(
+          Icons.perm_camera_mic_sharp,
+          color: Colors.white,
+        )),
+    const Fortune(
+        id: 8,
+        backgroundColor: Colors.amber,
+        icon: Icon(
+          Icons.camera_alt_outlined,
+          color: Colors.white,
+        )),
+  ];
+
+  static List<Fortune> icons2 = <Fortune>[
+    const Fortune(
+        id: 1,
+        backgroundColor: Colors.red,
+        titleName: 'favorite',
+        icon: Icon(
+          Icons.favorite,
+          color: Colors.white,
+        )),
+    const Fortune(
+        id: 2,
+        backgroundColor: Colors.green,
+        titleName: 'clock',
+        icon: Icon(
+          Icons.lock_clock,
+          color: Colors.white,
+        )),
+    const Fortune(
+        id: 3,
+        backgroundColor: Colors.amber,
+        titleName: 'car',
+        icon: Icon(
+          Icons.car_rental,
+          color: Colors.white,
+        )),
+    const Fortune(
+        id: 4,
+        backgroundColor: Colors.red,
+        titleName: 'phone',
+        icon: Icon(
+          Icons.phone_android_outlined,
+          color: Colors.white,
+        )),
+    const Fortune(
+        id: 5,
+        backgroundColor: Colors.green,
+        titleName: 'house',
+        icon: Icon(
+          Icons.house_outlined,
+          color: Colors.white,
+        )),
+    const Fortune(
+        id: 6,
+        backgroundColor: Colors.amber,
+        titleName: 'security',
+        icon: Icon(
+          Icons.security,
+          color: Colors.white,
+        )),
+    const Fortune(
+        id: 7,
+        backgroundColor: Colors.red,
+        titleName: 'Micro',
+        icon: Icon(
+          Icons.perm_camera_mic_sharp,
+          color: Colors.white,
+        )),
+    const Fortune(
+        id: 8,
+        backgroundColor: Colors.amber,
+        titleName: 'Camera',
+        icon: Icon(
+          Icons.camera_alt_outlined,
+          color: Colors.white,
+        )),
+  ];
 }
