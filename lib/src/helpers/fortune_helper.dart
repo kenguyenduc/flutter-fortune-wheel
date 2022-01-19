@@ -10,6 +10,7 @@ List<Fortune> getFortuneValuesByPriority(List<Fortune> items) {
   return result;
 }
 
+///Xử lý kiểm tra màu sáng hoặc tối
 bool isColorDark(Color color) {
   double darkness = 1 -
       ((0.299 * color.red) + (0.587 * color.green) + (0.114 * color.blue)) /

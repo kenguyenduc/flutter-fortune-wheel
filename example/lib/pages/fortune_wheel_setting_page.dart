@@ -7,7 +7,6 @@ import 'package:flutter_fortune_wheel_example/common/constants.dart';
 import 'package:flutter_fortune_wheel_example/widgets/custom_form_fortune_add_edit.dart';
 import 'package:flutter_fortune_wheel_example/widgets/fortune_item.dart';
 import 'package:flutter_fortune_wheel_example/widgets/fortune_template.dart';
-import '../models/wheel.dart';
 
 class FortuneWheelSettingPage extends StatefulWidget {
   const FortuneWheelSettingPage({
@@ -30,11 +29,15 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
 
   late final StreamController<bool> _fortuneValuesController;
 
+  final TextEditingController _titleSpinButtonController =
+      TextEditingController();
+
   @override
   void initState() {
     super.initState();
     _wheel = widget.wheel;
     _durationWheelController.text = _wheel.duration.inSeconds.toString();
+    _titleSpinButtonController.text = _wheel.titleSpinButton ?? '';
     _fortuneValuesController = StreamController<bool>.broadcast();
   }
 
@@ -55,7 +58,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: const Color(0xFFC3DBF8),
           appBar: AppBar(
             title: const Text('Cấu hình'),
             actions: [
@@ -84,6 +87,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
             children: [
               _buildGameMode(),
               _buildDuration(),
+              _buildEditTitle(),
               _buildExpansionFortuneValues(),
             ],
           ),
@@ -148,17 +152,17 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
             visualDensity: const VisualDensity(vertical: -4, horizontal: 0),
             onTap: () {
               setState(() {
-                _wheel = _wheel.copyWith(isGoByPriority: true);
+                _wheel = _wheel.copyWith(isSpinByPriority: true);
               });
             },
             title: const Text('Theo ưu tiên'),
             leading: Radio<bool>(
               value: true,
-              groupValue: _wheel.isGoByPriority,
+              groupValue: _wheel.isSpinByPriority,
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onChanged: (_) {
                 setState(() {
-                  _wheel = _wheel.copyWith(isGoByPriority: true);
+                  _wheel = _wheel.copyWith(isSpinByPriority: true);
                 });
               },
             ),
@@ -170,16 +174,16 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
             title: const Text('Theo ngẫu nhiên'),
             onTap: () {
               setState(() {
-                _wheel = _wheel.copyWith(isGoByPriority: false);
+                _wheel = _wheel.copyWith(isSpinByPriority: false);
               });
             },
             leading: Radio<bool>(
               value: false,
-              groupValue: _wheel.isGoByPriority,
+              groupValue: _wheel.isSpinByPriority,
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onChanged: (_) {
                 setState(() {
-                  _wheel = _wheel.copyWith(isGoByPriority: false);
+                  _wheel = _wheel.copyWith(isSpinByPriority: false);
                 });
               },
             ),
@@ -278,6 +282,31 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
     );
   }
 
+  Widget _buildEditTitle() {
+    return ListTile(
+      title: const Text(
+        'Tiêu đề nút quay',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      subtitle: Padding(
+        padding: const EdgeInsets.only(right: 8.0, left: 16),
+        child: TextFormField(
+          controller: _titleSpinButtonController,
+          keyboardType: TextInputType.text,
+          onChanged: (value) {
+            _wheel = _wheel.copyWith(
+              titleSpinButton: _titleSpinButtonController.text,
+            );
+          },
+          decoration: const InputDecoration(
+            hintText: 'Nhập tiêu đề nút quay',
+            hintStyle: TextStyle(color: Colors.grey),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildExpansionFortuneValues() {
     return ExpansionTile(
       initiallyExpanded: true,
@@ -315,12 +344,12 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
           key: const ValueKey<String>('FortuneValues'),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: _wheel.fortuneValues.length,
+          itemCount: _wheel.items.length,
           padding: const EdgeInsets.all(16),
           itemBuilder: (context, index) => FortuneItem(
-            key: ValueKey<String>(
-                'fortuneWheelItem<${_wheel.fortuneValues[index].id}>'),
-            fortune: _wheel.fortuneValues[index],
+            key:
+                ValueKey<String>('fortuneWheelItem<${_wheel.items[index].id}>'),
+            fortune: _wheel.items[index],
             onEditPressed: () => _handleEditFortuneItemPressed(index),
             onDeletePressed: () => _handleDeleteFortuneItemPressed(index),
           ),
@@ -336,8 +365,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         title: 'Ai sẽ phải uống?',
         fortuneValues: Constants.actionDrinkBeerList,
         onPressed: () {
-          _wheel =
-              _wheel.copyWith(fortuneValues: Constants.actionDrinkBeerList);
+          _wheel = _wheel.copyWith(items: Constants.actionDrinkBeerList);
           _fortuneValuesController.sink.add(true);
           Navigator.pop(context);
         },
@@ -346,7 +374,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         title: 'Hôm nay ăn gì?',
         fortuneValues: Constants.todayWhatDoEat,
         onPressed: () {
-          _wheel = _wheel.copyWith(fortuneValues: Constants.todayWhatDoEat);
+          _wheel = _wheel.copyWith(items: Constants.todayWhatDoEat);
           _fortuneValuesController.sink.add(true);
           Navigator.pop(context);
         },
@@ -355,7 +383,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         title: 'Có hoặc không?',
         fortuneValues: Constants.yesOrNo,
         onPressed: () {
-          _wheel = _wheel.copyWith(fortuneValues: Constants.yesOrNo);
+          _wheel = _wheel.copyWith(items: Constants.yesOrNo);
           _fortuneValuesController.sink.add(true);
           Navigator.pop(context);
         },
@@ -364,16 +392,61 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         title: 'Yêu hoặc không yêu?',
         fortuneValues: Constants.loveOrNotLove,
         onPressed: () {
-          _wheel = _wheel.copyWith(fortuneValues: Constants.loveOrNotLove);
+          _wheel = _wheel.copyWith(items: Constants.loveOrNotLove);
           _fortuneValuesController.sink.add(true);
           Navigator.pop(context);
         },
       ),
       FortuneTemplate(
-        title: 'Chọn số',
+        title: 'Chọn số (1- 12)',
+        fortuneValues: Constants.list12Item,
+        onPressed: () {
+          _wheel = _wheel.copyWith(items: Constants.list12Item);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
+        },
+      ),
+      FortuneTemplate(
+        title: 'Chọn số (1- 16)',
         fortuneValues: Constants.numbers,
         onPressed: () {
-          _wheel = _wheel.copyWith(fortuneValues: Constants.numbers);
+          _wheel = _wheel.copyWith(items: Constants.numbers);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
+        },
+      ),
+      FortuneTemplate(
+        title: 'Chọn số (1- 100)',
+        fortuneValues: Constants.numbers100,
+        onPressed: () {
+          _wheel = _wheel.copyWith(items: Constants.numbers100);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
+        },
+      ),
+      FortuneTemplate(
+        title: 'Chọn số (1- 160)',
+        fortuneValues: Constants.numbers160,
+        onPressed: () {
+          _wheel = _wheel.copyWith(items: Constants.numbers160);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
+        },
+      ),
+      FortuneTemplate(
+        title: 'Chọn phần thưởng (icon)',
+        fortuneValues: Constants.icons2,
+        onPressed: () {
+          _wheel = _wheel.copyWith(items: Constants.icons2);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
+        },
+      ),
+      FortuneTemplate(
+        title: 'Icons',
+        fortuneValues: Constants.icons,
+        onPressed: () {
+          _wheel = _wheel.copyWith(items: Constants.icons);
           _fortuneValuesController.sink.add(true);
           Navigator.pop(context);
         },
@@ -386,9 +459,11 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         return AlertDialog(
           title: const Text('Chọn mẫu mặc định'),
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: templates,
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: templates,
+            ),
           ),
           actions: [
             ElevatedButton(
@@ -412,13 +487,13 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
           content: CustomFormFortuneAddEdit(
             isInsert: true,
             fortuneItem: Fortune(
-              id: _wheel.fortuneValues.length + 1,
+              id: _wheel.items.length + 1,
               titleName: '',
               backgroundColor:
                   Colors.primaries[Random().nextInt(Colors.primaries.length)],
             ),
             onChanged: (fortuneItem) {
-              _wheel.fortuneValues.add(fortuneItem);
+              _wheel.items.add(fortuneItem);
               _fortuneValuesController.sink.add(true);
               Navigator.pop(context);
             },
@@ -435,9 +510,9 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
       builder: (context) {
         return AlertDialog(
           content: CustomFormFortuneAddEdit(
-            fortuneItem: _wheel.fortuneValues[index],
+            fortuneItem: _wheel.items[index],
             onChanged: (fortuneItem) {
-              _wheel.fortuneValues[index] = fortuneItem;
+              _wheel.items[index] = fortuneItem;
               _fortuneValuesController.sink.add(true);
               Navigator.pop(context);
             },
@@ -461,7 +536,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
       child: const Text('Xác nhận'),
       onPressed: () {
         Navigator.pop(context);
-        _wheel.fortuneValues.removeAt(index);
+        _wheel.items.removeAt(index);
         _fortuneValuesController.sink.add(true);
       },
       style: TextButton.styleFrom(

@@ -1,5 +1,6 @@
 name: flutter_fortune_wheel
-description: A new Flutter project.
+description: Visualize (random) selection processes with widgets like a spinning wheel of fortune.
+repository: https://github.com/kenguyenduc/flutter-fortune-wheel
 version: 0.0.1
 homepage:
 
@@ -12,6 +13,8 @@ dependencies:
     sdk: flutter
   auto_size_text: ^3.0.0
   equatable: ^2.0.3
+  quiver: ^3.0.1+1
+#  flutter_hooks: ^0.18.1
 
 dev_dependencies:
   flutter_test:

@@ -4,7 +4,6 @@ import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_fortune_wheel_example/common/constants.dart';
 import 'package:flutter_fortune_wheel_example/pages/fortune_wheel_history_page.dart';
 import 'package:flutter_fortune_wheel_example/pages/fortune_wheel_setting_page.dart';
-import 'package:flutter_fortune_wheel_example/models/wheel.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -29,14 +28,12 @@ class _MyAppState extends State<MyApp> {
       StreamController<bool>.broadcast();
 
   Wheel _wheel = Wheel(
-    fortuneValues: Constants.todayWhatDoEat,
-    isGoByPriority: false,
+    items: Constants.icons2,
+    // fortuneValues: Constants.icons,
+    // fortuneValues: Constants.list12Item,
+    isSpinByPriority: false,
+    duration: const Duration(seconds: 5),
   );
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -49,7 +46,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFFC3DBF8),
         appBar: AppBar(
           title: const Text('Vòng xoay may mắn'),
           actions: [
@@ -69,6 +66,7 @@ class _MyAppState extends State<MyApp> {
             IconButton(
               splashRadius: 28,
               onPressed: () async {
+                _fortuneWheelController.add(false);
                 final Wheel? result = await Navigator.push(
                   context,
                   MaterialPageRoute<Wheel>(
@@ -78,8 +76,8 @@ class _MyAppState extends State<MyApp> {
                 );
                 if (result != null) {
                   _wheel = result;
-                  _fortuneWheelController.sink.add(true);
                 }
+                _fortuneWheelController.add(true);
               },
               icon: const Icon(Icons.settings),
             ),
@@ -104,14 +102,15 @@ class _MyAppState extends State<MyApp> {
 
   Widget _buildFortuneWheel() {
     return Center(
-      child: StreamBuilder(
+      child: StreamBuilder<bool>(
         stream: _fortuneWheelController.stream,
         builder: (context, snapshot) {
+          if (snapshot.data == false) {
+            return const SizedBox.shrink();
+          }
           return FortuneWheel(
             key: const ValueKey<String>('ValueKeyFortunerWheel'),
-            items: _wheel.fortuneValues,
-            isGoByPriority: _wheel.isGoByPriority,
-            duration: _wheel.duration,
+            wheel: _wheel,
             onChanged: (Fortune item) {
               _resultWheelController.sink.add(item);
             },
@@ -127,7 +126,7 @@ class _MyAppState extends State<MyApp> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: const Color(0xFFC3DBF8),
           contentPadding: const EdgeInsets.all(8),
           title: const Text(
             'Xin chúc mừng!',
@@ -141,9 +140,18 @@ class _MyAppState extends State<MyApp> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 16),
-              Text(
-                item.titleName.toString(),
-                style: TextStyle(fontSize: 20, color: item.backgroundColor),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    item.titleName ?? '',
+                    style: TextStyle(fontSize: 20, color: item.backgroundColor),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: item.icon ?? const SizedBox(),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               Align(
@@ -170,13 +178,22 @@ class _MyAppState extends State<MyApp> {
             padding: const EdgeInsets.only(top: 32.0),
             child: Align(
               alignment: Alignment.bottomCenter,
-              child: Text(
-                snapshot.data!.titleName,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    snapshot.data!.titleName ?? '',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: snapshot.data!.icon ?? const SizedBox(),
+                  ),
+                ],
               ),
             ),
           );

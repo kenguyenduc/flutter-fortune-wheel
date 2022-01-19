@@ -6,25 +6,35 @@ import 'package:flutter/material.dart';
 class Fortune extends Equatable {
   const Fortune({
     required this.id,
-    required this.titleName,
+    this.titleName,
     required this.backgroundColor,
     this.priority = 1,
     this.icon,
-  }) : assert(
-          priority >= 0,
-          'Priority value should be greater than or equal to 0.',
-        );
+    this.textStyle,
+  })  : assert(priority >= 0),
+        assert(titleName != null || icon != null);
+
+  ///id giá trị mat mắn dùng để xác định phần tử trong danh sách random
   final int id;
-  final String titleName;
+
+  ///Tiêu đề giá trị may mắn
+  final String? titleName;
+
+  ///Màu nền của giá trị may mắn
   final Color backgroundColor;
 
   ///Hệ số ưu tiên quay trúng - là số lần xuất hiện trong danh sách xoay trúng
   ///Mặc định [priority] = 1
   final int priority;
+
+  ///Icon giá trị may mắn
   final Widget? icon;
 
+  ///style của tiêu đề
+  final TextStyle? textStyle;
+
   @override
-  List<Object?> get props => [id, titleName, priority];
+  List<Object?> get props => [id, titleName, priority, backgroundColor, icon];
 
   Fortune copyWith({
     String? titleName,

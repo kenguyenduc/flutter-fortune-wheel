@@ -1,1 +1,2 @@
-export 'package:flutter_fortune_wheel/src/models/fortune.dart';
+export 'fortune.dart';
+export 'wheel.dart';
