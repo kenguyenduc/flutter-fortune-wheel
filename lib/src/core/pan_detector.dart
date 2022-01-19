@@ -260,7 +260,7 @@ class _PanAwareBuilderState extends State<PanAwareBuilder>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation _animation;
-  late PanState panState;
+  late PanState _panState;
 
   @override
   void initState() {
@@ -271,7 +271,7 @@ class _PanAwareBuilderState extends State<PanAwareBuilder>
       parent: _animationController,
       curve: widget.physics.curve,
     );
-    panState = widget.physics.value;
+    _panState = widget.physics.value;
   }
 
   @override
@@ -281,11 +281,11 @@ class _PanAwareBuilderState extends State<PanAwareBuilder>
   }
 
   Future<void> _onPanStateUpdate(PanState value) async {
-    bool oldValue = panState.isPanning;
-    bool isPanningValueChange = panState.isPanning != value.isPanning;
-    panState = value;
+    bool oldValue = _panState.isPanning;
+    bool isPanningValueChange = _panState.isPanning != value.isPanning;
+    _panState = value;
     unawaited(_useValueIsPanningChanged(oldValue, isPanningValueChange));
-    unawaited(_useValueWasFlungChanged(panState.wasFlung));
+    unawaited(_useValueWasFlungChanged(_panState.wasFlung));
   }
 
   Future<void> _useValueIsPanningChanged(
@@ -326,13 +326,13 @@ class _PanAwareBuilderState extends State<PanAwareBuilder>
                       _animationController.status == AnimationStatus.completed;
 
                   if (mustApplyEasing) {
-                    panState = panState.copyWith(
-                      distance: panState.distance * (1 - _animation.value),
+                    _panState = _panState.copyWith(
+                      distance: _panState.distance * (1 - _animation.value),
                     );
                   }
 
                   return Builder(
-                    builder: (context) => widget.builder(context, panState),
+                    builder: (context) => widget.builder(context, _panState),
                   );
                 }),
           );

@@ -1,10 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_fortune_wheel/src/arrow_view.dart';
-import 'package:flutter_fortune_wheel/src/board_view.dart';
 import 'package:flutter_fortune_wheel/src/helpers/helpers.dart';
 import 'package:flutter_fortune_wheel/src/models/models.dart';
-import 'core/core.dart';
+import 'package:flutter_fortune_wheel/src/views/arrow_view.dart';
+import 'package:flutter_fortune_wheel/src/views/board_view.dart';
+import '../core/core.dart';
 
 class FortuneWheel extends StatefulWidget {
   const FortuneWheel({
@@ -66,8 +66,9 @@ class _FortuneWheelState extends State<FortuneWheel>
     _wheelAnimationController =
         AnimationController(vsync: this, duration: widget.wheel.duration);
     _wheelAnimation = CurvedAnimation(
-        parent: _wheelAnimationController,
-        curve: Curves.fastLinearToSlowEaseIn);
+      parent: _wheelAnimationController,
+      curve: Curves.fastLinearToSlowEaseIn,
+    );
     _fortuneValuesByPriority = getFortuneValuesByPriority(widget.wheel.items);
   }
 
@@ -134,9 +135,9 @@ class _FortuneWheelState extends State<FortuneWheel>
                 SizedBox(
                   height: radius,
                   width: radius,
-                  child: const Align(
-                    alignment: Alignment(1.08, 0),
-                    child: ArrowView(),
+                  child: Align(
+                    alignment: const Alignment(1.08, 0),
+                    child: widget.wheel.arrowView ?? const ArrowView(),
                   ),
                 ),
               ],
@@ -177,7 +178,9 @@ class _FortuneWheelState extends State<FortuneWheel>
   ///Xử lý xoay ngẫu nhiên
   Future<void> _handleSpinByRandomPressed() async {
     if (!_wheelAnimationController.isAnimating) {
+      //Random hệ số thập phân từ 0 đến 1
       double randomDouble = Random().nextDouble();
+      //random theo số phần tử
       int randomLength = Random().nextInt(widget.wheel.items.length);
       _angle =
           (randomDouble + widget.wheel.rotationCount + randomLength) * 2 * pi;

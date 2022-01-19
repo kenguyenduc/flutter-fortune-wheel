@@ -347,8 +347,8 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
           itemCount: _wheel.items.length,
           padding: const EdgeInsets.all(16),
           itemBuilder: (context, index) => FortuneItem(
-            key: ValueKey<String>(
-                'fortuneWheelItem<${_wheel.items[index].id}>'),
+            key:
+                ValueKey<String>('fortuneWheelItem<${_wheel.items[index].id}>'),
             fortune: _wheel.items[index],
             onEditPressed: () => _handleEditFortuneItemPressed(index),
             onDeletePressed: () => _handleDeleteFortuneItemPressed(index),
@@ -365,8 +365,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         title: 'Ai sẽ phải uống?',
         fortuneValues: Constants.actionDrinkBeerList,
         onPressed: () {
-          _wheel =
-              _wheel.copyWith(items: Constants.actionDrinkBeerList);
+          _wheel = _wheel.copyWith(items: Constants.actionDrinkBeerList);
           _fortuneValuesController.sink.add(true);
           Navigator.pop(context);
         },
@@ -417,6 +416,24 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         },
       ),
       FortuneTemplate(
+        title: 'Chọn số (1- 100)',
+        fortuneValues: Constants.numbers100,
+        onPressed: () {
+          _wheel = _wheel.copyWith(items: Constants.numbers100);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
+        },
+      ),
+      FortuneTemplate(
+        title: 'Chọn số (1- 160)',
+        fortuneValues: Constants.numbers160,
+        onPressed: () {
+          _wheel = _wheel.copyWith(items: Constants.numbers160);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
+        },
+      ),
+      FortuneTemplate(
         title: 'Chọn phần thưởng (icon)',
         fortuneValues: Constants.icons2,
         onPressed: () {
@@ -442,9 +459,11 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         return AlertDialog(
           title: const Text('Chọn mẫu mặc định'),
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: templates,
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: templates,
+            ),
           ),
           actions: [
             ElevatedButton(

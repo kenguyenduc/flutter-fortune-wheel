@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 
@@ -111,6 +113,23 @@ class Constants {
         backgroundColor: Colors.primaries[12],
         priority: 1),
   ];
+
+  static List<Fortune> numbers160 = List.generate(
+    160,
+    (index) => Fortune(
+        id: index + 1,
+        backgroundColor:
+            Colors.primaries[Random().nextInt(Colors.primaries.length)],
+        titleName: '${index + 1}'),
+  );
+  static List<Fortune> numbers100 = List.generate(
+    100,
+    (index) => Fortune(
+        id: index + 1,
+        backgroundColor:
+            Colors.primaries[Random().nextInt(Colors.primaries.length)],
+        titleName: '${index + 1}'),
+  );
 
   static List<Fortune> numbers = <Fortune>[
     Fortune(

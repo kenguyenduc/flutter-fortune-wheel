@@ -1,8 +1,9 @@
-import 'dart:math';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/src/models/models.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
+///UI Vòng quay
 class BoardView extends StatefulWidget {
   const BoardView({
     Key? key,
@@ -12,10 +13,16 @@ class BoardView extends StatefulWidget {
     this.radius,
   }) : super(key: key);
 
+  ///Góc xoay của vòng quay
   final double angle;
+
+  ///vị trị góc hiện tại vòng xoay đang đứng
   final double current;
+
+  ///danh sách giá trị phần tử vòng quay
   final List<Fortune> items;
 
+  ///Bán kính của vòng quay
   final double? radius;
 
   @override
@@ -30,19 +37,13 @@ class _BoardViewState extends State<BoardView> {
 
   ///Xử lý tính độ xoay của giá trị may mắn
   double _getRotateOfItem(int index) =>
-      (index / widget.items.length) * 2 * pi + pi / 2;
+      (index / widget.items.length) * 2 * math.pi + math.pi / 2;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: radius,
       width: radius,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(blurRadius: 20, color: Colors.black38),
-        ],
-      ),
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
@@ -56,6 +57,7 @@ class _BoardViewState extends State<BoardView> {
                   widget.items[index],
                 ),
               ),
+              // children: [_buildSlicedCircle(widget.items[0])],
             ),
           ),
         ],
@@ -78,21 +80,15 @@ class _BoardViewState extends State<BoardView> {
   }
 
   Widget _buildCard(Fortune fortune) {
-    double _angle = 2 * pi / widget.items.length;
-    return ClipPath(
-      clipper: _SlicesPath(_angle),
-      child: Container(
-        height: radius,
-        width: radius,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              fortune.backgroundColor,
-              fortune.backgroundColor.withOpacity(0)
-            ],
-          ),
+    double _angle = 2 * math.pi / widget.items.length;
+    return CustomPaint(
+      painter: _BorderPainter(_angle),
+      child: ClipPath(
+        clipper: _SlicesPath(_angle),
+        child: Container(
+          height: radius,
+          width: radius,
+          color: fortune.backgroundColor,
         ),
       ),
     );
@@ -135,6 +131,68 @@ class _BoardViewState extends State<BoardView> {
   }
 }
 
+class _BorderPainter extends CustomPainter {
+  final double angle;
+
+  _BorderPainter(this.angle);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const double radiusDot = 3;
+    double radius = size.width / 2;
+    Offset center = size.center(Offset.zero);
+
+    //Khung ngoài cùng
+    Paint outlineBrush = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 8.0
+      ..color = Colors.red;
+    Rect rect = Rect.fromCircle(center: center, radius: size.width / 2);
+    Path pathFirst = Path()
+      ..arcTo(rect, -math.pi / 2 - angle / 2, angle, false);
+
+    //Khung thứ 2 nền trắng
+    Paint outlineBrushSecond = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 6.0
+      ..color = Colors.white;
+    Rect rectSecond =
+        Rect.fromCircle(center: center, radius: size.width / 2 - 6);
+    Path pathSecond = Path()
+      ..arcTo(rectSecond, -math.pi / 2 - angle / 2, angle, false);
+
+    //đèn LED
+    Paint centerDot = Paint()
+      ..style = PaintingStyle.fill
+      ..color = Colors.yellowAccent
+      ..strokeWidth = 4.0;
+
+    Paint secondaryDot = Paint()
+      ..style = PaintingStyle.fill
+      ..color = Colors.white
+      ..strokeWidth = 4.0;
+
+    //Tọa độ giữa cung tròn
+    Offset centerSlice = Offset(radius, 0);
+
+    //hệ số tọa độ chênh lệch 2 đầu cung tròn
+    double dxFactor = math.sin(angle / 2) * radius;
+    double dyFactor = math.cos(angle / 2) * radius;
+
+    Offset rightSlice = Offset(radius - dxFactor, radius - dyFactor);
+    Offset leftSlice = Offset(radius + dxFactor, radius - dyFactor);
+
+    canvas.drawPath(pathFirst, outlineBrush);
+    canvas.drawPath(pathSecond, outlineBrushSecond);
+    canvas.drawCircle(centerSlice, radiusDot, centerDot);
+    canvas.drawCircle(rightSlice, radiusDot, secondaryDot);
+    canvas.drawCircle(leftSlice, radiusDot, secondaryDot);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
+}
+
 class _SlicesPath extends CustomClipper<Path> {
   final double angle;
 
@@ -142,13 +200,13 @@ class _SlicesPath extends CustomClipper<Path> {
 
   @override
   Path getClip(Size size) {
-    Offset _center = size.center(Offset.zero);
-    Rect _rect = Rect.fromCircle(center: _center, radius: size.width / 2);
-    Path _path = Path()
-      ..moveTo(_center.dx, _center.dy)
-      ..arcTo(_rect, -pi / 2 - angle / 2, angle, false)
+    Offset center = size.center(Offset.zero);
+    Rect rect = Rect.fromCircle(center: center, radius: size.width / 2 - 7);
+    Path path = Path()
+      ..moveTo(center.dx, center.dy)
+      ..arcTo(rect, -math.pi / 2 - angle / 2, angle, false)
       ..close();
-    return _path;
+    return path;
   }
 
   @override

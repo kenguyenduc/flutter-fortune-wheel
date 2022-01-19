@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+///A widget indicator, which is arrow spin result
 class ArrowView extends StatelessWidget {
   const ArrowView({Key? key}) : super(key: key);
 
@@ -32,13 +33,13 @@ class ArrowView extends StatelessWidget {
 class _ArrowClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    Offset _center = size.center(Offset.zero);
-    Path _path = Path()
-      ..lineTo(_center.dx, size.height)
+    Offset center = size.center(Offset.zero);
+    Path path = Path()
+      ..lineTo(center.dx, size.height)
       ..lineTo(size.width, 0)
-      ..lineTo(_center.dx, size.height / 4);
-    _path.close();
-    return _path;
+      ..lineTo(center.dx, size.height / 4);
+    path.close();
+    return path;
   }
 
   @override
