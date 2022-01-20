@@ -79,70 +79,55 @@ class _FortuneWheelState extends State<FortuneWheel>
   }
 
   @override
-  void didUpdateWidget(covariant FortuneWheel oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.wheel.duration != oldWidget.wheel.duration) {
-      _wheelAnimationController.duration = widget.wheel.duration;
-      _wheelAnimation = CurvedAnimation(
-        parent: _wheelAnimationController,
-        curve: Curves.fastLinearToSlowEaseIn,
-      );
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final meanSize = (size.width + size.height) / 2;
+    final panFactor = 6 / meanSize;
     return PanAwareBuilder(
       physics: CircularPanPhysics(),
       onFling: widget.wheel.isSpinByPriority
           ? _handleSpinByPriorityPressed
           : _handleSpinByRandomPressed,
       builder: (BuildContext context, PanState panState) {
-        return AnimatedBuilder(
-          animation: _wheelAnimation,
-          builder: (context, _) {
-            final size = MediaQuery.of(context).size;
-            final meanSize = (size.width + size.height) / 2;
-            final panFactor = 6 / meanSize;
-
-            final animationValue = _wheelAnimation.value;
-            final angle = animationValue * _angle;
-
-            if (_wheelAnimationController.isAnimating) {
-              _indexResult = _getIndexFortune(angle + _currentAngle);
-              widget.onChanged.call(widget.wheel.items[_indexResult]);
-            }
-            return Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final panAngle = panState.distance * panFactor;
-                    final rotationAngle = 2 *
-                        pi *
-                        widget.wheel.rotationCount *
-                        _wheelAnimation.value;
-                    return BoardView(
+        final panAngle = panState.distance * panFactor;
+        return Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            AnimatedBuilder(
+              animation: _wheelAnimation,
+              builder: (context, _) {
+                final animationValue = _wheelAnimation.value;
+                final angle = animationValue * _angle;
+                if (_wheelAnimationController.isAnimating) {
+                  _indexResult = _getIndexFortune(angle + _currentAngle);
+                  widget.onChanged.call(widget.wheel.items[_indexResult]);
+                }
+                final rotationAngle =
+                    2 * pi * widget.wheel.rotationCount * _wheelAnimation.value;
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    BoardView(
                       items: widget.wheel.items,
                       current: _currentAngle + rotationAngle + panAngle,
                       angle: angle,
                       radius: radius,
-                    );
-                  },
-                ),
-                _buildCenterOfWheel(),
-                _buildButtonSpin(),
-                SizedBox(
-                  height: radius,
-                  width: radius,
-                  child: Align(
-                    alignment: const Alignment(1.08, 0),
-                    child: widget.wheel.arrowView ?? const ArrowView(),
-                  ),
-                ),
-              ],
-            );
-          },
+                    ),
+                    _buildCenterOfWheel(),
+                    _buildButtonSpin(),
+                  ],
+                );
+              },
+            ),
+            SizedBox(
+              height: radius,
+              width: radius,
+              child: Align(
+                alignment: const Alignment(1.08, 0),
+                child: widget.wheel.arrowView ?? const ArrowView(),
+              ),
+            ),
+          ],
         );
       },
     );

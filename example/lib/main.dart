@@ -68,6 +68,7 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
     _resultWheelController.close();
     _fortuneWheelController.close();
+    _confettiController.dispose();
   }
 
   @override
@@ -191,26 +192,26 @@ class _MyAppState extends State<MyApp> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Align(
-                alignment: Alignment.center,
-                child: ConfettiWidget(
-                  confettiController: _confettiController,
-                  blastDirectionality: BlastDirectionality.explosive,
-                  // don't specify a direction, blast randomly
-                  // shouldLoop: true,
-                  // start again as soon as the animation is finished
-                  colors: const [
-                    Colors.green,
-                    Colors.blue,
-                    Colors.pink,
-                    Colors.orange,
-                    Colors.purple,
-                    Colors.yellowAccent,
-                  ],
-                  // manually specify the colors to be used
-                  createParticlePath: _drawStar, // define a custom shape/path.
-                ),
-              ),
+              // Align(
+              //   alignment: Alignment.center,
+              //   child: ConfettiWidget(
+              //     confettiController: _confettiController,
+              //     blastDirectionality: BlastDirectionality.explosive,
+              //     // don't specify a direction, blast randomly
+              //     // shouldLoop: true,
+              //     // start again as soon as the animation is finished
+              //     colors: const [
+              //       Colors.green,
+              //       Colors.blue,
+              //       Colors.pink,
+              //       Colors.orange,
+              //       Colors.purple,
+              //       Colors.yellowAccent,
+              //     ],
+              //     // manually specify the colors to be used
+              //     createParticlePath: _drawStar, // define a custom shape/path.
+              //   ),
+              // ),
               Container(
                 padding: const EdgeInsets.only(top: 20),
                 height: 200,
@@ -300,7 +301,7 @@ class _MyAppState extends State<MyApp> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Flexible(
-                child: AutoSizeText(
+                child: Text(
                   snapshot.data != null
                       ? snapshot.data!.titleName?.replaceAll('\n', '') ?? ''
                       : _wheel.items[0].titleName?.replaceAll('\n', '') ?? '',
