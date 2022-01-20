@@ -164,7 +164,7 @@ class _BorderPainter extends CustomPainter {
     //đèn LED
     Paint centerDot = Paint()
       ..style = PaintingStyle.fill
-      ..color = Colors.yellowAccent
+      ..color = Colors.yellow
       ..strokeWidth = 4.0;
 
     Paint secondaryDot = Paint()

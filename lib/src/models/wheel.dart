@@ -17,6 +17,7 @@ class Wheel extends Equatable {
     this.titleSpinButton,
     this.textStyleTitleSpinButton,
     this.arrowView,
+    this.colorIndicator,
   })  : assert(items.length >= 2),
         assert(rotationCount >= 0);
 
@@ -57,6 +58,9 @@ class Wheel extends Equatable {
   ///UI mũi tên chỉ kết quả vòng quay
   final Widget? arrowView;
 
+  ///Màu của mũi tên kết quả vòng quay
+  final Color? colorIndicator;
+
   Wheel copyWith({
     List<Fortune>? items,
     Duration? duration,
@@ -69,6 +73,7 @@ class Wheel extends Equatable {
     String? titleSpinButton,
     TextStyle? textStyleTitleSpinButton,
     Widget? arrowView,
+    Color? colorIndicator,
   }) {
     return Wheel(
       items: items ?? this.items,
@@ -83,6 +88,7 @@ class Wheel extends Equatable {
       textStyleTitleSpinButton:
           textStyleTitleSpinButton ?? this.textStyleTitleSpinButton,
       arrowView: arrowView ?? this.arrowView,
+      colorIndicator: colorIndicator ?? this.colorIndicator,
     );
   }
 
@@ -99,5 +105,6 @@ class Wheel extends Equatable {
         titleSpinButton,
         textStyleTitleSpinButton,
         arrowView,
+        colorIndicator,
       ];
 }

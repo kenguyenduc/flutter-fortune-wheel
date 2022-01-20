@@ -58,7 +58,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          backgroundColor: const Color(0xFFC3DBF8),
+          backgroundColor: const Color(0xFFC8E6C9),
           appBar: AppBar(
             title: const Text('Cấu hình'),
             actions: [
@@ -361,6 +361,15 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
 
   void _handleGetDefaultTemplate() {
     List<FortuneTemplate> templates = <FortuneTemplate>[
+      FortuneTemplate(
+        title: 'Lì xì năm mới',
+        fortuneValues: Constants.liXiNamMoi,
+        onPressed: () {
+          _wheel = _wheel.copyWith(items: Constants.liXiNamMoi);
+          _fortuneValuesController.sink.add(true);
+          Navigator.pop(context);
+        },
+      ),
       FortuneTemplate(
         title: 'Ai sẽ phải uống?',
         fortuneValues: Constants.actionDrinkBeerList,

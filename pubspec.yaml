@@ -14,7 +14,6 @@ dependencies:
   auto_size_text: ^3.0.0
   equatable: ^2.0.3
   quiver: ^3.0.1+1
-#  flutter_hooks: ^0.18.1
 
 dev_dependencies:
   flutter_test:

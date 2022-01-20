@@ -15,7 +15,6 @@ class FortuneTemplatesDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFC3DBF8),
       appBar: AppBar(title: Text(title)),
       body: ListView.separated(
         itemCount: fortuneValues.length,
