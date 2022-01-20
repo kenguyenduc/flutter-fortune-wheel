@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
     items: Constants.liXiNamMoi,
     // items: Constants.list12Item,
     isSpinByPriority: true,
-    duration: const Duration(seconds: 5),
+    duration: const Duration(seconds: 10),
   );
 
   @override
@@ -176,6 +176,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+  ///UI hiển thị kết quả vòng quay
   Future<void> _onResult(Fortune item) async {
     _confettiController.play();
 

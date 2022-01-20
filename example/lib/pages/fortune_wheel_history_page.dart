@@ -19,7 +19,9 @@ class FortuneWheelHistoryPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '--${index + 1}--' + (resultsHistory[index].titleName ?? ''),
+                '--Lần ${index + 1}--' +
+                    (resultsHistory[index].titleName?.replaceAll('\n', '') ??
+                        ''),
                 style: const TextStyle(fontSize: 16),
               ),
               Padding(
