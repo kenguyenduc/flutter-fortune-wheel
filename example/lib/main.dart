@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -179,8 +178,7 @@ class _MyAppState extends State<MyApp> {
 
   ///UI hiển thị kết quả vòng quay
   Future<void> _onResult(Fortune item) async {
-    _confettiController.play();
-
+    // _confettiController.play();
     await showDialog(
       context: context,
       barrierDismissible: false,
