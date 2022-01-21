@@ -28,7 +28,7 @@ class FortuneItem extends StatelessWidget {
               if (fortune.titleName != null)
                 Flexible(
                   child: Text(
-                    fortune.titleName ?? '',
+                    fortune.titleName?.replaceAll('\n', '') ?? '',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),

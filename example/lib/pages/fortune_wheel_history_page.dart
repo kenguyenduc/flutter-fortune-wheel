@@ -10,7 +10,6 @@ class FortuneWheelHistoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:  const Color(0xFFC3DBF8),
       appBar: AppBar(title: const Text('Lịch sử kết quả quay')),
       body: ListView.separated(
         itemCount: resultsHistory.length,
@@ -20,7 +19,9 @@ class FortuneWheelHistoryPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '--${index + 1}--' + (resultsHistory[index].titleName ?? ''),
+                '--Lần ${index + 1}--' +
+                    (resultsHistory[index].titleName?.replaceAll('\n', '') ??
+                        ''),
                 style: const TextStyle(fontSize: 16),
               ),
               Padding(

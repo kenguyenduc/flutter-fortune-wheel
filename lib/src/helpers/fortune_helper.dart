@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:math' as math;
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 
 ///Xử lý tạo danh sách kết quả theo giá trị ưu tiên
@@ -9,6 +10,10 @@ List<Fortune> getFortuneValuesByPriority(List<Fortune> items) {
   }
   return result;
 }
+
+///Xử lý tính độ xoay của giá trị may mắn
+double getRotateOfItem(int itemsCount, int index) =>
+    (index / itemsCount) * 2 * math.pi + math.pi / 2;
 
 ///Xử lý kiểm tra màu sáng hoặc tối
 bool isColorDark(Color color) {

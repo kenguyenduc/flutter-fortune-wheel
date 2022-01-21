@@ -420,4 +420,56 @@ class Constants {
           color: Colors.white,
         )),
   ];
+
+  static List<Fortune> liXiNamMoi = [
+    //5-2 10-5 20-30 50-20 100-10 200-5 500-1
+    const Fortune(
+      id: 1,
+      backgroundColor: Colors.amber,
+      titleName: 'Lì xì \n5K',
+      priority: 2,
+    ),
+    const Fortune(
+      id: 2,
+      backgroundColor: Colors.red,
+      titleName: 'Lì xì \n10K',
+      priority: 5,
+    ),
+    const Fortune(
+      id: 3,
+      backgroundColor: Colors.green,
+      titleName: 'Lì xì \n20K',
+      priority: 30,
+    ),
+    const Fortune(
+      id: 4,
+      backgroundColor: Colors.amber,
+      titleName: 'Lì xì \n50K',
+      priority: 20,
+    ),
+    const Fortune(
+      id: 5,
+      backgroundColor: Colors.red,
+      titleName: 'Lì xì \n100K',
+      priority: 10,
+    ),
+    const Fortune(
+      id: 6,
+      backgroundColor: Colors.green,
+      titleName: 'Lì xì \n200K',
+      priority: 5,
+    ),
+    const Fortune(
+      id: 7,
+      backgroundColor: Colors.amber,
+      titleName: 'Lì xì \n500K',
+      priority: 1,
+    ),
+    const Fortune(
+      id: 8,
+      backgroundColor: Colors.green,
+      titleName: 'Chúc bạn may mắn lần sau',
+      priority: 5,
+    ),
+  ];
 }

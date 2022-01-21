@@ -9,7 +9,7 @@ class Wheel extends Equatable {
     required this.items,
     this.duration = const Duration(seconds: 10),
     this.isSpinByPriority = true,
-    this.radius,
+    this.size,
     this.rotationCount = 50,
     this.childSpinButton,
     this.action,
@@ -17,6 +17,7 @@ class Wheel extends Equatable {
     this.titleSpinButton,
     this.textStyleTitleSpinButton,
     this.arrowView,
+    this.colorIndicator,
   })  : assert(items.length >= 2),
         assert(rotationCount >= 0);
 
@@ -35,9 +36,9 @@ class Wheel extends Equatable {
   ///Default value [rotationCount] = 50
   final int rotationCount;
 
-  ///Bán kính bánh xe may mắn
-  ///Default value [radius] = 0.8 * độ dài ngắn nhất của màn hình
-  final double? radius;
+  ///Kích thước bánh xe may mắn
+  ///Default value [size] = 0.8 * độ dài ngắn nhất của màn hình
+  final double? size;
 
   ///Widget child của nút quay
   final Widget? childSpinButton;
@@ -57,6 +58,9 @@ class Wheel extends Equatable {
   ///UI mũi tên chỉ kết quả vòng quay
   final Widget? arrowView;
 
+  ///Màu của mũi tên kết quả vòng quay
+  final Color? colorIndicator;
+
   Wheel copyWith({
     List<Fortune>? items,
     Duration? duration,
@@ -69,13 +73,14 @@ class Wheel extends Equatable {
     String? titleSpinButton,
     TextStyle? textStyleTitleSpinButton,
     Widget? arrowView,
+    Color? colorIndicator,
   }) {
     return Wheel(
       items: items ?? this.items,
       duration: duration ?? this.duration,
       isSpinByPriority: isSpinByPriority ?? this.isSpinByPriority,
       rotationCount: rotationCount ?? this.rotationCount,
-      radius: radius ?? this.radius,
+      size: radius ?? this.size,
       childSpinButton: childSpinButton ?? this.childSpinButton,
       action: action ?? this.action,
       spinButtonStyle: spinButtonStyle ?? this.spinButtonStyle,
@@ -83,6 +88,7 @@ class Wheel extends Equatable {
       textStyleTitleSpinButton:
           textStyleTitleSpinButton ?? this.textStyleTitleSpinButton,
       arrowView: arrowView ?? this.arrowView,
+      colorIndicator: colorIndicator ?? this.colorIndicator,
     );
   }
 
@@ -93,11 +99,12 @@ class Wheel extends Equatable {
         isSpinByPriority,
         rotationCount,
         childSpinButton,
-        radius,
+        size,
         action,
         spinButtonStyle,
         titleSpinButton,
         textStyleTitleSpinButton,
         arrowView,
+        colorIndicator,
       ];
 }
