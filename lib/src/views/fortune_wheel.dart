@@ -57,8 +57,8 @@ class _FortuneWheelState extends State<FortuneWheel>
   ///Danh sách phần tử vòng xoay được lấy theo ưu tiên quay trúng
   late List<Fortune> _fortuneValuesByPriority;
 
-  double get radius =>
-      widget.wheel.radius ?? MediaQuery.of(context).size.shortestSide * 0.8;
+  double get wheelSize =>
+      widget.wheel.size ?? MediaQuery.of(context).size.shortestSide * 0.8;
 
   @override
   void initState() {
@@ -80,8 +80,8 @@ class _FortuneWheelState extends State<FortuneWheel>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final meanSize = (size.width + size.height) / 2;
+    final deviceSize = MediaQuery.of(context).size;
+    final meanSize = (deviceSize.width + deviceSize.height) / 2;
     final panFactor = 6 / meanSize;
     return PanAwareBuilder(
       physics: CircularPanPhysics(),
@@ -95,23 +95,28 @@ class _FortuneWheelState extends State<FortuneWheel>
           children: <Widget>[
             AnimatedBuilder(
               animation: _wheelAnimation,
-              builder: (context, _) {
-                final animationValue = _wheelAnimation.value;
-                final angle = animationValue * _angle;
+              child: BoardView(
+                items: widget.wheel.items,
+                size: wheelSize,
+              ),
+              builder: (context, child) {
+                ///Góc xoay của vòng quay
+                final angle = _wheelAnimation.value * _angle;
                 if (_wheelAnimationController.isAnimating) {
                   _indexResult = _getIndexFortune(angle + _currentAngle);
                   widget.onChanged.call(widget.wheel.items[_indexResult]);
                 }
                 final rotationAngle =
                     2 * pi * widget.wheel.rotationCount * _wheelAnimation.value;
+
+                ///vị trị góc hiện tại vòng xoay đang đứng
+                final current = _currentAngle + rotationAngle + panAngle;
                 return Stack(
                   alignment: Alignment.center,
                   children: [
-                    BoardView(
-                      items: widget.wheel.items,
-                      current: _currentAngle + rotationAngle + panAngle,
-                      angle: angle,
-                      radius: radius,
+                    Transform.rotate(
+                      angle: angle + current,
+                      child: child,
                     ),
                     _buildCenterOfWheel(),
                     _buildButtonSpin(),
@@ -120,8 +125,8 @@ class _FortuneWheelState extends State<FortuneWheel>
               },
             ),
             SizedBox(
-              height: radius,
-              width: radius,
+              height: wheelSize,
+              width: wheelSize,
               child: Align(
                 alignment: const Alignment(1.08, 0),
                 child: widget.wheel.arrowView ?? const ArrowView(),

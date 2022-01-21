@@ -9,7 +9,7 @@ class Wheel extends Equatable {
     required this.items,
     this.duration = const Duration(seconds: 10),
     this.isSpinByPriority = true,
-    this.radius,
+    this.size,
     this.rotationCount = 50,
     this.childSpinButton,
     this.action,
@@ -36,9 +36,9 @@ class Wheel extends Equatable {
   ///Default value [rotationCount] = 50
   final int rotationCount;
 
-  ///Bán kính bánh xe may mắn
-  ///Default value [radius] = 0.8 * độ dài ngắn nhất của màn hình
-  final double? radius;
+  ///Kích thước bánh xe may mắn
+  ///Default value [size] = 0.8 * độ dài ngắn nhất của màn hình
+  final double? size;
 
   ///Widget child của nút quay
   final Widget? childSpinButton;
@@ -80,7 +80,7 @@ class Wheel extends Equatable {
       duration: duration ?? this.duration,
       isSpinByPriority: isSpinByPriority ?? this.isSpinByPriority,
       rotationCount: rotationCount ?? this.rotationCount,
-      radius: radius ?? this.radius,
+      size: radius ?? this.size,
       childSpinButton: childSpinButton ?? this.childSpinButton,
       action: action ?? this.action,
       spinButtonStyle: spinButtonStyle ?? this.spinButtonStyle,
@@ -99,7 +99,7 @@ class Wheel extends Equatable {
         isSpinByPriority,
         rotationCount,
         childSpinButton,
-        radius,
+        size,
         action,
         spinButtonStyle,
         titleSpinButton,

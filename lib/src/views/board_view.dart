@@ -8,45 +8,27 @@ import 'package:auto_size_text/auto_size_text.dart';
 class BoardView extends StatelessWidget {
   const BoardView({
     Key? key,
-    required this.angle,
-    required this.current,
     required this.items,
-    required this.radius,
+    required this.size,
   }) : super(key: key);
-
-  ///Góc xoay của vòng quay
-  final double angle;
-
-  ///vị trị góc hiện tại vòng xoay đang đứng
-  final double current;
 
   ///danh sách giá trị phần tử vòng quay
   final List<Fortune> items;
 
-  ///Bán kính của vòng quay
-  final double radius;
+  ///Kích thước của vòng quay
+  final double size;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: radius,
-      width: radius,
+      height: size,
+      width: size,
       child: Stack(
         alignment: Alignment.center,
-        children: <Widget>[
-          Transform.rotate(
-            angle: angle + current,
-            child: Stack(
-              alignment: Alignment.center,
-              children: List.generate(
-                items.length,
-                (index) => _buildSlicedCircle(
-                  items[index],
-                ),
-              ),
-            ),
-          ),
-        ],
+        children: List.generate(
+          items.length,
+          (index) => _buildSlicedCircle(items[index]),
+        ),
       ),
     );
   }
@@ -75,8 +57,8 @@ class BoardView extends StatelessWidget {
       child: ClipPath(
         clipper: _SlicesPath(_angle),
         child: Container(
-          height: radius,
-          width: radius,
+          height: size,
+          width: size,
           color: fortune.backgroundColor,
         ),
       ),
@@ -85,12 +67,12 @@ class BoardView extends StatelessWidget {
 
   Widget _buildValue(Fortune fortune) {
     return Container(
-      height: radius,
-      width: radius,
+      height: size,
+      width: size,
       alignment: Alignment.topCenter,
       padding: const EdgeInsets.only(top: 16),
       child: ConstrainedBox(
-        constraints: BoxConstraints.expand(height: radius / 3, width: 54),
+        constraints: BoxConstraints.expand(height: size / 3, width: 54),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -120,6 +102,7 @@ class BoardView extends StatelessWidget {
   }
 }
 
+///Painter khung viền vòng quay
 class _BorderPainter extends CustomPainter {
   final double angle;
 
