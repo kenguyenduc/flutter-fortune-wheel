@@ -3,9 +3,17 @@
 Visualize (random) selection processes with widgets like a spinning wheel of fortune.
 
 ## Demo
-![Preview](demo/luckywheel_01.gif)
 
-![Preview](demo/luckywheel_02.gif)
+<table align="center" style="margin: 0px auto;">
+  <tr>
+    <th>Random Mode (iPhone 13 Pro Max Simulator)</th>
+    <th>Priority Mode (iPhone 13 Pro Max Simulator)</th>
+  </tr>
+  <tr>
+    <td><img align="right" src="demo/luckywheel_01.gif" height="500"></img></td>
+    <td><img align="right" src="demo/luckywheel_02.gif" height="500"></img></td>
+  </tr>
+</table>
 
 ## Getting Started
 
