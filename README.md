@@ -1,6 +1,11 @@
 # flutter_fortune_wheel
 
-A new Flutter project.
+Visualize (random) selection processes with widgets like a spinning wheel of fortune.
+
+## Demo
+![Preview](demo/luckywheel_01.gif)
+
+![Preview](demo/luckywheel_02.gif)
 
 ## Getting Started
 
