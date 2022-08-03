@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 
 ///Xây dựng background painter có animation
 ///[child] nội dung hiện thị
