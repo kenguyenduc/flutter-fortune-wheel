@@ -2,6 +2,15 @@
 
 Visualize (random) selection processes with widgets like a spinning wheel of fortune.
 
+## Screenshot
+<!-- ![screenshot1](./demo/screenshot1.png) -->
+<table align="center" style="margin: 0px auto;">
+  <tr>
+    <td><img align="right" src="./demo/screenshot1.png" height="600" width="300"></img></td>
+    <td><img align="right" src="./demo/screenshot2.png" height="600" width="300"></img></td>
+  </tr>
+</table>
+
 ## Demo
 
 <table align="center" style="margin: 0px auto;">
