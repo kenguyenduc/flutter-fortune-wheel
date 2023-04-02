@@ -25,6 +25,6 @@ jobs:
       - name: Invoke workflow without inputs
         uses: benc-uk/workflow-dispatch@v1
         with:
-          workflow: deploy-example
+          workflow: .github/workflows/deploy-example.yml
           token: ${{ secrets.GITHUB_TOKEN }}
 
