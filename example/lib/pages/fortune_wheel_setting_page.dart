@@ -102,7 +102,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         Navigator.pop(context);
       },
       style: TextButton.styleFrom(
-        primary: Colors.red,
+        foregroundColor: Colors.red,
       ),
     );
     Widget okButton = TextButton(
@@ -112,7 +112,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         Navigator.pop(context);
       },
       style: TextButton.styleFrom(
-        primary: Colors.blue,
+        foregroundColor: Colors.blue,
       ),
     );
 
@@ -537,7 +537,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         Navigator.pop(context);
       },
       style: TextButton.styleFrom(
-        primary: Colors.red,
+        foregroundColor: Colors.red,
       ),
     );
     Widget okButton = TextButton(
@@ -548,7 +548,7 @@ class _FortuneWheelSettingPageState extends State<FortuneWheelSettingPage> {
         _fortuneValuesController.sink.add(true);
       },
       style: TextButton.styleFrom(
-        primary: Colors.blue,
+        foregroundColor: Colors.blue,
       ),
     );
 

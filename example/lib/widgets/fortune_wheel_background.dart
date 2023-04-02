@@ -110,9 +110,6 @@ class _BackgroundPainter extends CustomPainter {
   _BackgroundPainter(
       {required this.anglePerTriangle,
       required this.numberTriangle,
-      this.randomNoise = 20,
-      this.startRandomNoise = 15,
-      this.endRandomNoise = 35,
       this.rotateAngle = 0,
       required this.painterController}) {
     painter = Paint()
@@ -121,14 +118,14 @@ class _BackgroundPainter extends CustomPainter {
   }
 
   final int numberTriangle;
-  final int randomNoise;
-  final double startRandomNoise;
-  final double endRandomNoise;
   final double anglePerTriangle;
   final BackgroundPainterController painterController;
   final double rotateAngle;
-
   late final Paint painter;
+
+  final int randomNoise = 20;
+  final double startRandomNoise = 15;
+  final double endRandomNoise = 35;
 
   double angleToRadian(double angle) {
     return (angle * pi) / 180.0;
@@ -205,7 +202,9 @@ class _BackgroundPainter extends CustomPainter {
 
     if (!painterController.isInit) {
       ///draw random noise small circle gradient
-      for (final int i in List<int>.generate(randomNoise, (index) => index)) {
+      List<int> randomNoiseList =
+          List<int>.generate(randomNoise, (index) => index);
+      for (int i = 0; i < randomNoiseList.length; i++) {
         final double randomX = doubleInRange(Random(), 0, size.width);
         final double randomY = doubleInRange(Random(), 0, size.height);
         final double randomSize =

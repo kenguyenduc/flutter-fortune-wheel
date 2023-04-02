@@ -80,7 +80,7 @@ class Wheel extends Equatable {
       duration: duration ?? this.duration,
       isSpinByPriority: isSpinByPriority ?? this.isSpinByPriority,
       rotationCount: rotationCount ?? this.rotationCount,
-      size: radius ?? this.size,
+      size: radius ?? size,
       childSpinButton: childSpinButton ?? this.childSpinButton,
       action: action ?? this.action,
       spinButtonStyle: spinButtonStyle ?? this.spinButtonStyle,

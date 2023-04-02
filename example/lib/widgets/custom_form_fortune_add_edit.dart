@@ -131,7 +131,7 @@ class _CustomFormFortuneAddEditState extends State<CustomFormFortuneAddEdit> {
               children: [
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.red,
+                    backgroundColor: Colors.red,
                   ),
                   onPressed: () {
                     Navigator.pop(context);
