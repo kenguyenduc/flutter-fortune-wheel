@@ -49,7 +49,7 @@ class _CustomFormFortuneAddEditState extends State<CustomFormFortuneAddEdit> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              widget.isInsert ? 'Thêm giá trị may mắn' : 'Sửa giá trị may mắn',
+              widget.isInsert ? 'Adding Lucky Value' : 'Fixing Lucky Value',
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -94,7 +94,7 @@ class _CustomFormFortuneAddEditState extends State<CustomFormFortuneAddEdit> {
             const SizedBox(height: 16),
             Row(
               children: [
-                const Text('Chọn màu nền: '),
+                const Text('Select background color:'),
                 const SizedBox(width: 16),
                 DropdownButton<Color>(
                   value: _fortuneItem.backgroundColor,
