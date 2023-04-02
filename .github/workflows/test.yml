@@ -22,8 +22,8 @@ jobs:
 #       - name: Tests
 #         run: flutter test
 
-      - name: Trigger other workflow
-        uses: peter-evans/workflow-dispatch@v1
+      - name: Invoke workflow without inputs
+        uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: deploy-example
           token: ${{ secrets.GITHUB_TOKEN }}
