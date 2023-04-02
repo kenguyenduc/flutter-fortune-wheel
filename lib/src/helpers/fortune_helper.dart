@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'dart:math' as math;
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 
-///Xử lý tạo danh sách kết quả theo giá trị ưu tiên
+///Generating a list of results based on priority values
 List<Fortune> getFortuneValuesByPriority(List<Fortune> items) {
   List<Fortune> result = [];
   for (Fortune item in items) {
@@ -11,11 +11,11 @@ List<Fortune> getFortuneValuesByPriority(List<Fortune> items) {
   return result;
 }
 
-///Xử lý tính độ xoay của giá trị may mắn
+///Processing the rotation angle of the lucky value
 double getRotateOfItem(int itemsCount, int index) =>
     (index / itemsCount) * 2 * math.pi + math.pi / 2;
 
-///Xử lý kiểm tra màu sáng hoặc tối
+///Handling check for light or dark mode
 bool isColorDark(Color color) {
   double darkness = 1 -
       ((0.299 * color.red) + (0.587 * color.green) + (0.114 * color.blue)) /

@@ -5,6 +5,8 @@ import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 class Constants {
   Constants._();
 
+  static Constants I = Constants._();
+
   static List<Fortune> list8Item = <Fortune>[
     Fortune(
         id: 1,

@@ -16,19 +16,19 @@ class FortuneWheel extends StatefulWidget {
     this.onAnimationEnd,
   }) : super(key: key);
 
-  ///Cấu hình vòng quay
+  ///Configure wheel
   final Wheel wheel;
 
-  ///Xử lý cập nhật kết quả thay đổi các giá trị khi đang quay
+  ///Handling updates of changed values while spinning
   final Function(Fortune item) onChanged;
 
-  ///Xứ lý trả về kết quả vòng xoay
+  ///Handling returning the result of the spin
   final Function(Fortune item) onResult;
 
-  ///Xử lý khi bắt đầu quay
+  ///Handling when starting to spin
   final VoidCallback? onAnimationStart;
 
-  ///Xử lý khi kết thúc quay
+  ///Handling when spinning ends
   final VoidCallback? onAnimationEnd;
 
   @override
@@ -40,21 +40,21 @@ class _FortuneWheelState extends State<FortuneWheel>
   late AnimationController _wheelAnimationController;
   late Animation _wheelAnimation;
 
-  ///Góc xoay của bánh xe
-  ///Default ban đầu [_angle]=0
+  ///Wheel rotation angle
+  ///Default value [_angle] = 0
   double _angle = 0;
 
-  ///Góc xoay hiện tại của bánh xe sau khi có kết quả xoay
-  ///Default ban đầu [_currentAngle]=0
+  ///Current rotation angle of the wheel after spinning
+  ///Default value [_currentAngle]=0
   double _currentAngle = 0;
 
-  ///index giá trị phần thưởng kim chi xoay hiện tại đang đứng
+  ///Index of the current position of the prize value on wheel
   int _currentIndex = 0;
 
-  ///index kết quả vòng quay sau khi quay
+  ///Index of the result after spinning the wheel
   int _indexResult = 0;
 
-  ///Danh sách phần tử vòng xoay được lấy theo ưu tiên quay trúng
+  ///List of wheel elements prioritized for winning spins
   late List<Fortune> _fortuneValuesByPriority;
 
   double get wheelSize =>
@@ -100,7 +100,7 @@ class _FortuneWheelState extends State<FortuneWheel>
                 size: wheelSize,
               ),
               builder: (context, child) {
-                ///Góc xoay của vòng quay
+                ///Rotation angle of the wheel
                 final angle = _wheelAnimation.value * _angle;
                 if (_wheelAnimationController.isAnimating) {
                   _indexResult = _getIndexFortune(angle + _currentAngle);
@@ -109,7 +109,7 @@ class _FortuneWheelState extends State<FortuneWheel>
                 final rotationAngle =
                     2 * pi * widget.wheel.rotationCount * _wheelAnimation.value;
 
-                ///vị trị góc hiện tại vòng xoay đang đứng
+                ///Current angle position of the standing wheel
                 final current = _currentAngle + rotationAngle + panAngle;
                 return Stack(
                   alignment: Alignment.center,
@@ -138,12 +138,12 @@ class _FortuneWheelState extends State<FortuneWheel>
     );
   }
 
-  ///UI Tâm của bánh xe
+  ///UI Wheel center
   Widget _buildCenterOfWheel() {
     return const CircleAvatar(radius: 16, backgroundColor: Colors.white);
   }
 
-  ///UI Button quay
+  ///UI Button Spin
   Widget _buildButtonSpin() {
     return Visibility(
       visible: !_wheelAnimationController.isAnimating,
@@ -158,14 +158,14 @@ class _FortuneWheelState extends State<FortuneWheel>
                 ),
             child: widget.wheel.childSpinButton ??
                 Text(
-                  widget.wheel.titleSpinButton ?? 'Bấm vào đây để quay',
+                  widget.wheel.titleSpinButton ?? 'Click here to spin',
                   style: const TextStyle(fontSize: 16, color: Colors.white),
                 ),
           ),
     );
   }
 
-  ///Xử lý xoay ngẫu nhiên
+  ///Handling mode random spinning
   Future<void> _handleSpinByRandomPressed() async {
     if (!_wheelAnimationController.isAnimating) {
       //Random hệ số thập phân từ 0 đến 1
@@ -187,17 +187,16 @@ class _FortuneWheelState extends State<FortuneWheel>
     }
   }
 
-  ///Xử lý tính toán giá trị index của phần tử khi đang quay
+  ///Handling the calculation of the index value of the element while spinning
   int _getIndexFortune(double value) {
     int itemCount = widget.wheel.items.length;
     double rightOffset = value - (pi / itemCount);
     return (itemCount - rightOffset / (2 * pi) * itemCount).floor() % itemCount;
   }
 
-  ///Xử lý xoay theo giá trị ưu tiên quay trúng
+  ///Handling mode spinning based on prioritized winning values
   Future<void> _handleSpinByPriorityPressed() async {
     if (!_wheelAnimationController.isAnimating) {
-      //random index trong danh sách được tạo theo ưu tiên quay trúng
       final int randomIndex = Random().nextInt(_fortuneValuesByPriority.length);
       Fortune result = _fortuneValuesByPriority[randomIndex];
       int index = widget.wheel.items.indexWhere((element) => element == result);
@@ -209,12 +208,12 @@ class _FortuneWheelState extends State<FortuneWheel>
 
       int itemCount = widget.wheel.items.length;
 
-      //Số item để đi đến kết quả theo index
+      //Number of items to reach the result by index
       int angleFactor = _currentIndex > _indexResult
           ? _currentIndex - _indexResult
           : itemCount - (_indexResult - _currentIndex);
 
-      //Tính góc xoay đến giá trị quay trúng
+      //Calculate the rotation angle to the winning spin value
       _angle = (2 * pi / itemCount) * angleFactor +
           widget.wheel.rotationCount * 2 * pi;
       await Future.microtask(() => widget.onAnimationStart?.call());

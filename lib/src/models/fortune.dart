@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-///Giá tri may mắn phần tử vòng quay
+///Lucky Wheel Element Value
 @immutable
 class Fortune extends Equatable {
   const Fortune({
@@ -14,23 +14,23 @@ class Fortune extends Equatable {
   })  : assert(priority >= 0),
         assert(titleName != null || icon != null);
 
-  ///id giá trị mat mắn dùng để xác định phần tử trong danh sách random
+  ///Lucky Value ID
   final int id;
 
-  ///Tiêu đề giá trị may mắn
+  ///Lucky value title
   final String? titleName;
 
-  ///Màu nền của giá trị may mắn
+  ///Background color Lucky value title
   final Color backgroundColor;
 
-  ///Hệ số ưu tiên quay trúng - là số lần xuất hiện trong danh sách xoay trúng
-  ///Mặc định [priority] = 1
+  ///Priority spin coefficient
+  ///Default value [priority] = 1
   final int priority;
 
-  ///Icon giá trị may mắn
+  ///Icon Lucky value
   final Widget? icon;
 
-  ///style của tiêu đề
+  ///text style of Lucky value title
   final TextStyle? textStyle;
 
   @override

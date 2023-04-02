@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 
-///Dùng để cấu hình hiển thị vòng quay may mắn
+///Used to configure the lucky wheel display
 @immutable
 class Wheel extends Equatable {
   const Wheel({
@@ -21,44 +21,44 @@ class Wheel extends Equatable {
   })  : assert(items.length >= 2),
         assert(rotationCount >= 0);
 
-  ///Danh sách các phần tử may mắn
+  ///List of lucky elements
   final List<Fortune> items;
 
-  ///Thời gian quay
+  ///Spin time
   final Duration duration;
 
-  ///Kiểm tra đang là chế độ quay ngẫu nhiên hay theo giá trị ưu tiên quay trúng
-  ///[isSpinByPriority] = true : theo giá trị ưu tiên quay trúng
-  ///[isSpinByPriority] = false : quay ngẫu nhiên
+  ///For check mode
+  ///[isSpinByPriority] = true :  According to priority value of the winning spin mode
+  ///[isSpinByPriority] = false : Random spin mode
   final bool isSpinByPriority;
 
-  ///Số vòng quay đến kết quả
+  ///Number of spins to reach the result
   ///Default value [rotationCount] = 50
   final int rotationCount;
 
-  ///Kích thước bánh xe may mắn
-  ///Default value [size] = 0.8 * độ dài ngắn nhất của màn hình
+  ///Size of the lucky wheel
+  ///Default value [size] = 0.8 * The shortest length of the screen.
   final double? size;
 
-  ///Widget child của nút quay
+  ///Widget spin button
   final Widget? childSpinButton;
 
-  ///Widget thay thế nút quay
+  ///Widget Replace spin button
   final Widget? action;
 
-  ///ButtonStyle của nút quay
+  ///Spin Button Style
   final ButtonStyle? spinButtonStyle;
 
-  ///Tiêu đề nút quay
+  ///title spin button
   final String? titleSpinButton;
 
-  ///style của Tiêu đề nút quay
+  ///Button title style
   final TextStyle? textStyleTitleSpinButton;
 
-  ///UI mũi tên chỉ kết quả vòng quay
+  ///UI arrow
   final Widget? arrowView;
 
-  ///Màu của mũi tên kết quả vòng quay
+  ///Color arrow
   final Color? colorIndicator;
 
   Wheel copyWith({

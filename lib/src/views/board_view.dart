@@ -4,7 +4,7 @@ import 'package:flutter_fortune_wheel/src/helpers/helpers.dart';
 import 'package:flutter_fortune_wheel/src/models/models.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
-///UI Vòng quay
+///UI Wheel
 class BoardView extends StatelessWidget {
   const BoardView({
     Key? key,
@@ -12,10 +12,10 @@ class BoardView extends StatelessWidget {
     required this.size,
   }) : super(key: key);
 
-  ///danh sách giá trị phần tử vòng quay
+  ///List of values for the wheel elements
   final List<Fortune> items;
 
-  ///Kích thước của vòng quay
+  ///Size of the wheel
   final double size;
 
   @override
@@ -102,7 +102,7 @@ class BoardView extends StatelessWidget {
   }
 }
 
-///Painter khung viền vòng quay
+///Wheel frame painter
 class _BorderPainter extends CustomPainter {
   final double angle;
 
@@ -114,7 +114,7 @@ class _BorderPainter extends CustomPainter {
     double radius = size.width / 2;
     Offset center = size.center(Offset.zero);
 
-    //Khung ngoài cùng
+    //Outer border
     Paint outlineBrush = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 8.0
@@ -123,7 +123,7 @@ class _BorderPainter extends CustomPainter {
     Path pathFirst = Path()
       ..arcTo(rect, -math.pi / 2 - angle / 2, angle, false);
 
-    //Khung thứ 2 nền trắng
+    //Second frame with white background
     Paint outlineBrushSecond = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 6.0
@@ -133,7 +133,7 @@ class _BorderPainter extends CustomPainter {
     Path pathSecond = Path()
       ..arcTo(rectSecond, -math.pi / 2 - angle / 2, angle, false);
 
-    //đèn LED
+    //LED lights
     Paint centerDot = Paint()
       ..style = PaintingStyle.fill
       ..color = Colors.yellow
@@ -144,10 +144,10 @@ class _BorderPainter extends CustomPainter {
       ..color = Colors.white
       ..strokeWidth = 4.0;
 
-    //Tọa độ giữa cung tròn
+    //Coordinates of the center of the circle
     Offset centerSlice = Offset(radius, 0);
 
-    //hệ số tọa độ chênh lệch 2 đầu cung tròn
+    //Coordinate difference coefficient between two ends of the circular arc
     double dxFactor = math.sin(angle / 2) * radius;
     double dyFactor = math.cos(angle / 2) * radius;
 

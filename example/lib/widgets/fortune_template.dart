@@ -47,7 +47,7 @@ class FortuneTemplate extends StatelessWidget {
                 );
               },
               child: const Text(
-                'Chi tiết',
+                'Details',
                 style: TextStyle(fontSize: 13),
               ),
             ),

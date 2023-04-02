@@ -21,7 +21,7 @@ void main() {
       debugShowCheckedModeBanner: false,
       theme: appTheme,
       home: const MyApp(),
-      title: 'Vòng xoay may mắn',
+      title: 'Wheel of Fortune',
     ),
   );
 }
@@ -48,8 +48,8 @@ class _MyAppState extends State<MyApp> {
 
   Wheel _wheel = Wheel(
     // items: Constants.icons2,
-    items: Constants.liXiNamMoi,
-    // items: Constants.list12Item,
+    // items: Constants.liXiNamMoi,
+    items: Constants.list12Item,
     isSpinByPriority: true,
     duration: const Duration(seconds: 10),
   );
@@ -108,7 +108,7 @@ class _MyAppState extends State<MyApp> {
             ),
             const SizedBox(width: 16),
             const Text(
-              'Vòng xoay may mắn',
+              'Wheel of Fortune',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,
@@ -176,7 +176,6 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  ///UI hiển thị kết quả vòng quay
   Future<void> _onResult(Fortune item) async {
     // _confettiController.play();
     await showDialog(
@@ -222,7 +221,7 @@ class _MyAppState extends State<MyApp> {
               const Padding(
                 padding: EdgeInsets.only(left: 8.0),
                 child: Text(
-                  'Bạn đã quay vào ô: ',
+                  'Spin value:',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -270,7 +269,7 @@ class _MyAppState extends State<MyApp> {
                     _painterController.playAnimation();
                   },
                   child: const Text(
-                    'Xác nhận',
+                    'OK',
                     style: TextStyle(
                       color: Color(0xFF1B5E20),
                       fontWeight: FontWeight.bold,

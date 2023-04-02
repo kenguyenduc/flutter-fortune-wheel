@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 
-///UI Form sửa thông tin giá trị vòng quay
 class CustomFormFortuneAddEdit extends StatefulWidget {
   const CustomFormFortuneAddEdit({
     Key? key,
@@ -66,12 +65,12 @@ class _CustomFormFortuneAddEditState extends State<CustomFormFortuneAddEdit> {
                     controller: _titleItemController,
                     keyboardType: TextInputType.text,
                     decoration: const InputDecoration(
-                      hintText: 'Nhập tên',
-                      labelText: 'Tên',
+                      hintText: 'Enter name',
+                      labelText: 'Name',
                     ),
                     validator: (String? value) {
                       return (value == null || value.isEmpty)
-                          ? 'Tên không được để trống'
+                          ? 'Name cannot be empty.'
                           : null;
                     },
                   ),
@@ -79,12 +78,12 @@ class _CustomFormFortuneAddEditState extends State<CustomFormFortuneAddEdit> {
                     controller: _priorityController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      hintText: 'Nhập hệ số',
-                      labelText: 'Hệ số ưu tiên',
+                      hintText: 'Enter priority coefficient',
+                      labelText: 'Priority coefficient',
                     ),
                     validator: (String? value) {
                       return (value == null || value.isEmpty)
-                          ? 'Hệ số ưu tiên không được để trống'
+                          ? 'Priority coefficient cannot be empty.'
                           : null;
                     },
                   ),
@@ -136,7 +135,7 @@ class _CustomFormFortuneAddEditState extends State<CustomFormFortuneAddEdit> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text('Hủy'),
+                  child: const Text('Cancel'),
                 ),
                 const SizedBox(width: 16),
                 ElevatedButton(
@@ -149,7 +148,7 @@ class _CustomFormFortuneAddEditState extends State<CustomFormFortuneAddEdit> {
                       widget.onChanged.call(_fortuneItem);
                     }
                   },
-                  child: const Text('Lưu'),
+                  child: const Text('Save'),
                 ),
               ],
             ),

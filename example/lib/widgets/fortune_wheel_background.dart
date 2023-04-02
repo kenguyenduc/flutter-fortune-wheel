@@ -3,9 +3,10 @@ import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
-///Xây dựng background painter có animation
-///[child] nội dung hiện thị
-///[painterController] dùng để quay khi ta gọi hàm [playElementAnimation] trong [BackgroundPainterController]
+///Build background painter with animation
+///[child] UI
+///[painterController] to spin when we call the function [playElementAnimation]
+///in the function [BackgroundPainterController]
 class FortuneWheelBackground extends StatefulWidget {
   const FortuneWheelBackground(
       {Key? key,
