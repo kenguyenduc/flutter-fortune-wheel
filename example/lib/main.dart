@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:confetti/confetti.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
@@ -251,10 +252,11 @@ class _MyAppState extends State<MyApp> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16),
-                        child: item.icon ?? const SizedBox(),
-                      ),
+                      if (item.icon != null)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: item.icon,
+                        ),
                     ],
                   ),
                 ),
@@ -293,7 +295,8 @@ class _MyAppState extends State<MyApp> {
       stream: _resultWheelController.stream,
       builder: (context, snapshot) {
         return Padding(
-          padding: const EdgeInsets.only(top: 32.0, left: 16, right: 16),
+          padding: const EdgeInsets.only(
+              top: kIsWeb ? 0 : 16.0, left: 16, right: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
