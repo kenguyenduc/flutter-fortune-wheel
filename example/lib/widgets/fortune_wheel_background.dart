@@ -10,10 +10,10 @@ import 'package:flutter/material.dart';
 class FortuneWheelBackground extends StatefulWidget {
   const FortuneWheelBackground(
       {Key? key,
-        required this.painterController,
-        required this.child,
-        this.backgroundColor = const Color(0xff198827),
-        this.duration = const Duration(milliseconds: 5000)})
+      required this.painterController,
+      required this.child,
+      this.backgroundColor = const Color(0xff198827),
+      this.duration = const Duration(milliseconds: 5000)})
       : super(key: key);
 
   @override
@@ -109,12 +109,12 @@ class BackgroundPainterController extends ChangeNotifier {
 class _BackgroundPainter extends CustomPainter {
   _BackgroundPainter(
       {required this.anglePerTriangle,
-        required this.numberTriangle,
-        this.randomNoise = 20,
-        this.startRandomNoise = 15,
-        this.endRandomNoise = 35,
-        this.rotateAngle = 0,
-        required this.painterController}) {
+      required this.numberTriangle,
+      this.randomNoise = 20,
+      this.startRandomNoise = 15,
+      this.endRandomNoise = 35,
+      this.rotateAngle = 0,
+      required this.painterController}) {
     painter = Paint()
       ..color = Colors.purpleAccent
       ..style = PaintingStyle.fill;
@@ -146,7 +146,7 @@ class _BackgroundPainter extends CustomPainter {
 
     final double sizeCircle = size.height / 2 + 100;
     final double radius =
-    sqrt(sizeCircle * sizeCircle + sizeCircle * sizeCircle);
+        sqrt(sizeCircle * sizeCircle + sizeCircle * sizeCircle);
 
     final double spaceBetween =
         (360 - anglePerTriangle * numberTriangle) / numberTriangle;
@@ -209,7 +209,7 @@ class _BackgroundPainter extends CustomPainter {
         final double randomX = doubleInRange(Random(), 0, size.width);
         final double randomY = doubleInRange(Random(), 0, size.height);
         final double randomSize =
-        doubleInRange(Random(), startRandomNoise, endRandomNoise);
+            doubleInRange(Random(), startRandomNoise, endRandomNoise);
         painterController.noisePoints.add(Offset(randomX, randomY));
         painterController.noiseSizes.add(randomSize);
         final Rect randomRect = Rect.fromCenter(

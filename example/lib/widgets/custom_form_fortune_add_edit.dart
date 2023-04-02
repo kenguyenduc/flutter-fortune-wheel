@@ -28,7 +28,8 @@ class _CustomFormFortuneAddEditState extends State<CustomFormFortuneAddEdit> {
   void initState() {
     super.initState();
     _fortuneItem = widget.fortuneItem;
-    _titleItemController.text = _fortuneItem.titleName?.replaceAll('\n', '')  ?? '';
+    _titleItemController.text =
+        _fortuneItem.titleName?.replaceAll('\n', '') ?? '';
     _priorityController.text = _fortuneItem.priority.toString();
   }
 
